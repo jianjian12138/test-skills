@@ -1,0 +1,14 @@
+// 真实接入 QA skills 套件门禁；R-02 硬化：统一门禁入口跑齐四道闸 + REGISTRY 派生校验 + 严格闸。
+// 任一 stage 非零退出即阻断流水线。
+pipeline {
+    agent any
+    tools { python "3.13" }
+    stages {
+        stage('Gates') {
+            steps { sh 'python .workbuddy/skills/tools/run_gates.py' }
+        }
+        stage('Security') {
+            steps { sh 'python .workbuddy/skills/qa-security-scan/scripts/scan_secrets.py --path . --signals-dir signals' }
+        }
+    }
+}

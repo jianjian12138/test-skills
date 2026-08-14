@@ -1,0 +1,8 @@
+{
+  "url": "https://app/home",
+  "elements": [
+    {"id": "header", "props": {"display": "flex", "width": "100%", "color": "#222", "text": "首页"}},
+    {"id": "logo",   "props": {"width": "120px", "height": "40px"}},
+    {"id": "footer", "props": {"display": "block", "text": "© 2026"}}
+  ]
+}

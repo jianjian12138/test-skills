@@ -1,0 +1,27 @@
+name: QA Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 本工作流真实接入 QA skills 套件的三道闸 + 零依赖安全扫描，而非通用占位。
+# 任一闸门非零退出即阻断合并（CI 真门禁，非摆设）。
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # R-02 硬化：统一门禁入口跑齐四道闸 + REGISTRY 派生校验 + 严格闸
+      # （--require-verified / --strict-meta），任一非零即阻断合并。
+      - name: Unified QA gates (compileall / REGISTRY派生 / check_drift(strict) / portability / golden)
+        run: python .workbuddy/skills/tools/run_gates.py
+
+      - name: Security scan (零依赖自带扫描器, fail-closed)
+        run: python .workbuddy/skills/qa-security-scan/scripts/scan_secrets.py --path . --signals-dir signals

@@ -1,0 +1,17 @@
+# 调试 / 临时
+.tmp_*
+__pycache__/
+*.pyc
+
+# 生成物（可由脚本再生）
+dist/
+signals/
+
+# 内部记忆（非交付物）
+.workbuddy/memory/
+
+# 编辑器 / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

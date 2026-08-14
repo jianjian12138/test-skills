@@ -1,0 +1,12 @@
+{
+  "journeys": [
+    {
+      "name": "checkout-flow",
+      "business_critical": true,
+      "frequency": "5m",
+      "steps": [
+        { "url": "https://shop.example.com/checkout", "method": "GET" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+[
+  {"id": "M1", "file": "calc.py", "line": 10, "operator": "AOR", "status": "equivalent"},
+  {"id": "M2", "file": "calc.py", "line": 12, "operator": "ROR", "status": "equivalent"},
+  {"id": "M3", "file": "calc.py", "line": 20, "operator": "LVR", "status": "equivalent"}
+]

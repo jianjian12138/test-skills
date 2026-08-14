@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://workbuddy.local/schemas/quality-signal-contract-1.0.json",
+  "title": "Quality Signal Contract",
+  "description": "质量信号契约（SSOT = scripts/_common.py:emit_signal）。顶层文档 + signals[] 数组。",
+  "type": "object",
+  "required": ["source", "generated_at", "schema_version", "signals"],
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "技能名，须与 REGISTRY.json / stages.json 一致",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "ISO8601 产出时间",
+      "format": "date-time"
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "契约版本，当前 1.0",
+      "enum": ["1.0"]
+    },
+    "signals": {
+      "type": "array",
+      "description": "信号对象数组（可为空）",
+      "items": { "$ref": "#/definitions/signal" }
+    }
+  },
+  "definitions": {
+    "signal": {
+      "type": "object",
+      "required": ["signal", "severity", "count", "blocking"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": { "properties": { "blocking": { "const": true } } },
+          "then": {
+            "required": ["severity"],
+            "properties": {
+              "severity": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low", "info"]
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "signal": { "type": "string", "minLength": 1 },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low", "info"]
+        },
+        "count": { "type": "integer", "minimum": 0 },
+        "blocking": { "type": "boolean" },
+        "detail_ref": { "type": "string" },
+        "verdict": { "type": "string" },
+        "rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,651 @@
+{
+  "version": 2,
+  "generated_by": "build_registry.py",
+  "count": 40,
+  "skills": [
+    {
+      "name": "qa-a11y",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "无障碍(WCAG 2.1)静态检查治理门禁：扫描 HTML 源码/标记（不实际渲染、不调用渲染引擎或 axe-core），按 A 级规则（替代文本、表单标签、语言、标题层级、可访问名称、字幕、交互角色） 识别违规，存在 A 级问题时产出阻断信号，保障 Web 产品可达性。真实渲染级可访问性校验须接 axe-core/pa11y。触发词： \"无障碍\", \"WCAG\", \"a11y\", \"可达性\", \"accessibility\", or after qa-ui-automation. 英文触发词（English triggers）：accessibility, WCAG, a11y.",
+      "scripts": [
+        "_common.py",
+        "a11y_check.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-agent-eval",
+      "category": "agent",
+      "stage": "agent_testing",
+      "description": "评估被测 Agent 本身的能力与可靠性（与被测业务系统区分）。提供任务完成率 Pass@1/Pass^k、工具调用准确率、规划/记忆/可靠性五维度评分、轨迹（trace）崩溃分析，以及自包含评测任务目录（含隐藏 rubric）的设计与生成。当用户需要评测 AI Agent、做 Agent 基准测试、Agent 能力评估、Agent 可靠性度量、Agent 轨迹分析、Pass@k 统计、构建 Agent 评测数据集时使用。 英文触发词（English triggers）：agent evaluation, benchmark, Pass@k, LLM eval.",
+      "scripts": [
+        "calc_metrics.py",
+        "gen_task.py",
+        "grade_run.py",
+        "grade_trace.py",
+        "scorecard.py",
+        "trace_event.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": false
+    },
+    {
+      "name": "qa-agent-security",
+      "category": "agent",
+      "stage": "agent_testing",
+      "description": "对 Agent 做安全 / 红队评测（区别于传统业务系统安全扫描）。覆盖提示注入（直接 / 间接）、越权、数据泄露、长程崩溃等攻击手法，并用 ASR（攻击成功率）与效用保持率双轴判定风险。当用户需要 Agent 红队测试、Agent 提示注入评测、Agent 越权 / 泄露测试、Agent 攻击成功率 ASR、Agent 抗注入能力评估时使用。 英文触发词（English triggers）：agent red team, prompt injection, ASR, adversarial.",
+      "scripts": [
+        "calc_asr.py",
+        "gen_attacks.py",
+        "judge_attack.py",
+        "run_attacks.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": false
+    },
+    {
+      "name": "qa-api-contract",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "接口契约测试技能：对比新旧两份 OpenAPI 规范，自动识别破坏性变更（Breaking Change）并卡 CI。 内置 35 条规则（27 BREAKING / 8 WARN），覆盖端点、参数、请求体、响应、组合类型、安全方案、服务器与弃用 8 个维度。触发词： \"契约测试\", \"接口契约\", \"API 破坏性变更\", \"OpenAPI diff\", \"接口兼容性\", or after qa-api-doc. 英文触发词（English triggers）：API contract, OpenAPI, contract testing, breaking change.",
+      "scripts": [
+        "contract_diff.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-api-doc",
+      "category": "traditional",
+      "stage": "05-api",
+      "description": "当用户需要一份可用的接口规范来驱动接口测试或自动化，却缺少规范文档，或已有的 Swagger/Yapi 靠手工复制、每次变更就过期时使用。本技能把 Swagger / OpenAPI 动态 拉取（或读取本地 JSON）为标准化的 Markdown/JSON 接口文档；在没有文档服务器时， 指导从源码（Java/Go/Python/Node）扫描提取接口清单。触发词：\"获取接口文档\"、 \"拉取 Swagger\"、\"没有接口文档怎么办\"、\"从代码生成接口文档\"，或在 qa-api-runner / qa-test-case-gen 之前使用。 英文触发词（English triggers）：API documentation, Swagger, OpenAPI, API spec.",
+      "scripts": [
+        "swagger_fetch.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-api-runner",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当用户已有接口文档（来自 qa-api-doc），需要真正执行接口自动化测试而不只是生成 用例时使用。本技能以配置驱动的场景文件运行，支持单接口测试、多接口业务串联 （变量 extract 提取 + ${var} 注入）、MySQL 数据库双校验断言，以及 Allure 报告。 触发词：\"执行接口自动化\"、\"跑接口用例\"、\"接口串联测试\"、\"接口加数据库校验\"， 或在 qa-api-doc / qa-test-case-gen 之后使用。 英文触发词（English triggers）：API automation, interface testing, API test runner.",
+      "scripts": [
+        "bridge_agent_regression.py",
+        "engine.py",
+        "run.py",
+        "test_api.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [
+        "requests",
+        "mysql",
+        "allure"
+      ],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-archive",
+      "category": "traditional",
+      "stage": "08-archive",
+      "description": "在一次变更 / 测试周期结束时使用，把全部产物（需求、用例、执行结果、报告、缺陷） 打包成一个带时间戳与清单 manifest 的归档，使整个测试生命周期可追溯、可复盘、 可还原交付审计。触发词：\"归档\"、\"一键归档\"、\"测试归档\"、\"关闭变更\"，或在 qa-release-check 通过之后使用。 英文触发词（English triggers）：test archive, change closure, test artifacts.",
+      "scripts": [
+        "archive_change.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-bug-report",
+      "category": "traditional",
+      "stage": "07-report",
+      "description": "当测试发现缺陷、需要产出结构化缺陷单，或需要提交到 TAPD / 禅道 / Jira 时使用。 本技能把缺陷 JSON 转成标准化的 Markdown 缺陷报告，并生成主流缺陷平台可直接使用的 字段映射载荷。触发词：\"提交缺陷\"、\"提bug\"、\"缺陷单\"、\"bug报告\"，或在 qa-execution / qa-api-runner / qa-perf-analysis / qa-security-report 发现失败之后使用。 英文触发词（English triggers）：bug report, defect, issue tracker.",
+      "scripts": [
+        "gen_bug.py",
+        "rate_severity.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-bug-verify",
+      "category": "traditional",
+      "stage": "07-report",
+      "description": "在缺陷（来自 qa-bug-report）修复之后使用，规划并执行验证与回归。本技能生成验证 计划：按原复现步骤重跑、逐条核对验收标准，并根据缺陷影响的模块 / 代码推导关联 回归范围。触发词：\"缺陷验证\"、\"验证bug\"、\"回归测试\"、\"bug回归\"，或在 qa-bug-report 的缺陷单转为已修复 / 待验证之后使用。 英文触发词（English triggers）：bug verification, regression test, defect verify.",
+      "scripts": [
+        "gen_verify_plan.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-chaos",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "混沌工程治理门禁技能：校验混沌实验规格是否「受治理」——业务关键实验必须定义稳态假设、终止条件、回退方案与爆炸半径；未受治理的关键实验产出阻断信号，避免在生产盲目注入故障。触发词：\"混沌工程\", \"chaos\", \"故障注入\", \"韧性\", \"resilience\", \"混沌实验\", \"稳态假设\", or after qa-perf-analysis. 英文触发词（English triggers）：chaos engineering, fault injection, resilience.",
+      "scripts": [
+        "_common.py",
+        "chaos_gate.py"
+      ],
+      "has_references": true,
+      "tier": 2,
+      "runtime_dependencies": [],
+      "verified_by": "pending:see-§7",
+      "last_verified": "",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-ci",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "用于生成 CI/CD 流水线配置，让每次 push/PR 都自动运行 QA 测试套件 （lint + 单元测试 + 接口/UI/安全扫描）。本技能从一份配置 JSON 生成可直接提交的 GitHub Actions、GitLab CI、Jenkinsfile 配置，默认串起 lint → 单元 → 接口/UI → 安全扫描的质量门禁。触发词：\"CI配置\"、\"流水线\"、\"GitHub Actions\"、\"GitLab CI\"、 \"Jenkins\"、\"把测试接进CI\"。 英文触发词（English triggers）：CI/CD, pipeline, GitHub Actions, Jenkins.",
+      "scripts": [
+        "gen_ci.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-code-review",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "代码评审启发式门禁技能：纯标准库扫描源码，识别评审期高危反模式——硬编码密钥(critical/阻断)、SQL 拼接、超长函数、无工单的 TODO/FIXME、遗留调试打印；存在硬编码密钥时产出阻断信号。触发词：\"代码评审\", \"code review\", \"CR\", \"评审门禁\", \"静态检查\", \"代码质量\", or after qa-unit-tdd. 英文触发词（English triggers）：code review, CR, static analysis, lint.",
+      "scripts": [
+        "_common.py",
+        "review_scan.py"
+      ],
+      "has_references": true,
+      "tier": 2,
+      "runtime_dependencies": [],
+      "verified_by": "pending:see-§7",
+      "last_verified": "",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-compat-matrix",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "兼容性测试矩阵生成技能：根据 OS × 浏览器 × 设备 × 分辨率 × 网络 维度配置，生成带优先级 （必测/建议/可选）与「是否需云真机/云浏览器」标注的覆盖矩阵（CSV + Markdown）。覆盖 BrowserStack/SauceLabs/阿里云真机/腾讯 WeTest 接入与国产浏览器内核注意点。触发词： \"兼容性矩阵\", \"compatibility\", \"浏览器兼容\", \"设备矩阵\", or after qa-test-analysis. 英文触发词（English triggers）：compatibility matrix, browser compatibility, cross-device.",
+      "scripts": [
+        "gen_matrix.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-env-config",
+      "category": "traditional",
+      "stage": "04-testdata",
+      "description": "当用户搭建或管理接口/UI 自动化的测试环境，需要把多环境配置（base URL、账号、 token、DB 连接）与代码分离且避免泄露时使用。本技能生成各环境的 .env 模板脚手架， 并约定环境切换与配置规范。触发词：\"配置测试环境\"、\"多环境怎么管理\"、 \"接口依赖/token 怎么配\"、\"测试用例配置\"，或在 qa-api-runner / qa-ui-automation 之前使用。 英文触发词（English triggers）：test environment, env config, multi-environment.",
+      "scripts": [
+        "init_env.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-execution",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当一个版本需要把多类测试（UI / API / 性能 / 安全）统一编排与跟踪时使用。本技能 从用例 + 结果 JSON 生成执行进度矩阵（按模块 / 类型 / 状态交叉统计），并把每个 失败项路由到对应的下游技能处理。触发词：\"执行编排\"、\"测试进度矩阵\"、 \"跨类型执行\"、\"测试进度跟踪\"。 英文触发词（English triggers）：test execution, test progress, orchestration.",
+      "scripts": [
+        "gen_matrix.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-exploratory",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "探索性测试引导技能：把功能 / 风险点转化为一组结构化测试章程（charter），并给出 HTSM 启发式、常用 Tour、缺陷苗头信号与 note-taking 模板。用于需求模糊、时间紧、补充脚本化 测试盲区。触发词： \"探索性测试\", \"exploratory\", \"章程\", \"charter\", \"随机测试\", or after qa-test-analysis. 英文触发词（English triggers）：exploratory testing, charter, session-based.",
+      "scripts": [
+        "gen_charters.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-flaky-detect",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "不稳定测试（flaky）检测技能：基于同一测试集的多轮重跑结果，识别「时过时不过」的 flaky 用例， 计算 flaky 率与重跑建议，超阈值时产出阻断信号。解决「CI 偶发红但本地复现不了」的隐形成本。触发词： \"flaky\", \"不稳定测试\", \"偶发失败\", \"重跑\", \"测试抖动\", or after qa-api-runner/qa-ui-automation. 英文触发词（English triggers）：flaky test, test stability, nondeterministic.",
+      "scripts": [
+        "detect_flaky.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-mobile-autotest",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "移动端 App 自动化测试技能：把「摸清现状→列清单→生成资产→自检→中文交付」整成标准流水线。 含八步交付闭环、定位金字塔（accessibility id 优先，XPath 兜底）、五维质量 rubric （可运行性/定位健壮性/可维护性/稳定性/覆盖透明度，<70 必须补全）、fault-diagnosis 决策树。 触发词： \"移动端测试\", \"APP 自动化\", \"Appium\", \"移动测试技能\", \"手机兼容性\", or after qa-test-analysis. 英文触发词（English triggers）：mobile testing, Appium, mobile automation.",
+      "scripts": [
+        "check_env.py",
+        "fault_diagnosis.py",
+        "quality_rubric.py",
+        "scaffold_manifest.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-mutation",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "变异测试分数治理门禁：本技能**不注入变异体、不运行测试**，仅基于变异工具(mutmut/cosmic-ray/pit)已产出的 mutants 清单计算变异分数（killed/(total-equivalent)），低于阈值时产出阻断信号，衡量测试套件「杀死缺陷」的真实能力。真实变异注入须接专业工具。触发词： \"变异测试\", \"mutation testing\", \"变异分数\", \"测试充分性\", or after qa-test-case-gen/qa-api-runner. 英文触发词（English triggers）：mutation testing, mutation score, test adequacy.",
+      "scripts": [
+        "mutation_score.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-orchestrator",
+      "category": "traditional",
+      "stage": "orchestrator",
+      "description": "半自动 QA 测试全生命周期编排脚手架：当用户开启一轮测试工作，需要在完整 QA 生命周期 （需求 → 分析 → 用例设计 → API/UI/性能/安全/探索式/兼容性测试 → 执行 → 缺陷 → 发布 → 报告 → 归档）中做规划、路由与跟踪时使用。本技能为每轮变更建立标准化产物目录， 把任务分派给其他 qa-* 技能，并可自动推荐下一步该用哪个技能（scripts/route_next.py） 或通过 close_loop.py 推进编排闭环。**定位说明（避免误期）：编排层为半自动—— 执行类阶段（接口/UI/性能/安全自动化）需被测环境就绪且由用户/agent 实际触发，关键 发布与归档节点的人工确认不可跳过；本技能不臆造执行结果，仅做规划/路由/跟踪。** 触发词：\"开始一轮测试\"、\"帮我做测试\"、\"测试这个项目\"、\"规划测试\"、 \"下一步用什么技能\"，或任何端到端测试任务。 英文触发词（English triggers）：QA orchestration, test lifecycle, test workflow.",
+      "scripts": [
+        "_stages.py",
+        "check_drift.py",
+        "checkpoint.py",
+        "close_loop.py",
+        "init_change.py",
+        "render_stages.py",
+        "route_agent.py",
+        "route_next.py",
+        "run_object.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": false
+    },
+    {
+      "name": "qa-perf-analysis",
+      "category": "traditional",
+      "stage": "07-report",
+      "description": "在 Locust 压测（来自 qa-perf-locust）执行完成后使用，把原始 CSV 产物转成可读结论： 总吞吐、延迟分位（P50/P95/P99）、错误率、瓶颈定位归因，以及 SLA 是否达标的判定。 触发词：\"分析压测结果\"、\"性能结果分析\"、\"瓶颈定位\"、\"Locust报告解读\"，或在 qa-perf-locust 之后使用。 英文触发词（English triggers）：performance analysis, latency, SLA, bottleneck.",
+      "scripts": [
+        "analyze_locust.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-perf-design",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当测试工程师需要把需求、NFR 或容量目标翻译成可执行的性能测试方案时使用：设计 负载 load / 压力 stress / 疲劳 endurance(soak) / 尖峰 spike 四类场景，明确并发数、 目标 TPS、爬坡 ramp-up、思考时间 think-time 与 SLA 阈值。触发词：\"性能测试方案\"、 \"压测设计\"、\"性能场景\"、\"容量评估\"、\"并发多少\"，或在 qa-req-spec / qa-test-analysis 之后使用。 英文触发词（English triggers）：performance test design, load testing, stress testing.",
+      "scripts": [
+        "calc_capacity.py",
+        "gen_perf_plan.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-perf-jmeter",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "性能测试 JMeter 技能（与 qa-perf-locust 平级、共用 qa-perf-design 场景 schema）。把 场景 JSON 生成标准 JMeter .jmx，并解析 JMeter 结果 CSV 给出与 qa-perf-analysis 同口径 的吞吐 / 延迟分位 / 错误率 / 瓶颈诊断 / SLA 判定。适合无代码 / 分布式压测 / 已有 JMeter 资产的团队。触发词： \"JMeter 压测\", \"生成 jmx\", \"JMeter 结果分析\", or after qa-perf-design. 英文触发词（English triggers）：JMeter, jmx, performance testing.",
+      "scripts": [
+        "analyze_jmeter.py",
+        "gen_jmx.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-perf-locust",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当已有性能测试方案（来自 qa-perf-design），需要生成可直接运行的 Locust 压测脚本时 使用。本技能根据场景 JSON 渲染出 Locust 的 .py 脚本，包含 User/TaskSet 任务类、 思考时间 think-time、任务权重 weight、爬坡 ramp-up 参数，并给出运行命令。 触发词：\"生成压测脚本\"、\"Locust脚本\"、\"性能脚本\"，或在 qa-perf-design 之后使用。 英文触发词（English triggers）：Locust, load testing, performance script.",
+      "scripts": [
+        "gen_locust.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-release-check",
+      "category": "traditional",
+      "stage": "07-report",
+      "description": "在生产发布前后使用，核验是否具备上线条件：生成上线门禁清单（构建/DB 迁移/配置/ 依赖/回滚方案）、上线冒烟 smoke 清单，以及发布后监控清单。触发词：\"上线验证\"、 \"发布检查\"、\"上线冒烟\"、\"发布后监控\"，或在 qa-archive 关闭变更之前使用。 英文触发词（English triggers）：release checklist, go-live, smoke test.",
+      "scripts": [
+        "gen_release_checklist.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-report",
+      "category": "traditional",
+      "stage": "07-report",
+      "description": "当测试执行完成（功能用例已在 Excel 填好执行结果，和/或已有 qa-api-runner 的接口 自动化 results.json），用户需要一份汇总测试报告时使用。报告自动统计通过率、 各模块分布、缺陷与阻塞分布，并给出质量评估与上线建议。触发词：\"生成测试报告\"、 \"出报告\"、\"统计通过率\"、\"测试总结\"，或在测试执行完成之后使用。 英文触发词（English triggers）：test report, pass rate, test summary.",
+      "scripts": [
+        "parse_results.py",
+        "trend_compare.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [
+        "openpyxl"
+      ],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-req-spec",
+      "category": "traditional",
+      "stage": "01-requirement",
+      "description": "当用户手上是零散、非结构化的原始需求材料（PRD 片段、用户故事、会议记录、 蓝湖/Figma 原型标注文字、或以文字描述的截图），需要转成规范、可直接用于测试的 需求文档时使用。本技能产出结构统一的 Markdown 需求文档，包含模块划分、交互规则、 输入与权限约束、异常边界及待确认问题，供下游 qa-* 技能消费。触发词：\"整理需求\"、 \"把原型转成需求文档\"、\"需求结构化\"、\"这份需求帮我规范一下\"，或当需求刚粘贴进来、 尚不足以直接做测试分析时使用。 英文触发词（English triggers）：requirement spec, PRD, requirement structuring.",
+      "scripts": [
+        "gen_trace_matrix.py",
+        "update_trace.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-risk-based",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "基于风险的测试（RBT）量化技能：按 Risk = Impact × Probability 对需求/模块/变更点打分定级， 输出风险登记册并反推测试密度（用例数量、回归范围、兼容性优先级）。触发词： \"基于风险的测试\", \"风险量化\", \"测试优先级\", \"RBT\", or after qa-test-analysis. 英文触发词（English triggers）：risk-based testing, RBT, risk register.",
+      "scripts": [
+        "risk_register.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-security-report",
+      "category": "traditional",
+      "stage": "07-report",
+      "description": "在安全扫描（qa-security-scan）完成之后使用，把 ZAP / Semgrep / Trivy / 密钥扫描 产出的分散 findings 归一成一份带风险评级（参考 CVSS 思路分 Critical / High / Medium / Low / Info）与整改建议的安全报告，并按级别排序便于排期修复与上线门禁决策。 触发词：\"安全报告\"、\"漏洞风险评级\"、\"安全整改\"、\"风险评级\"，或在 qa-security-scan 之后使用。 英文触发词（English triggers）：security report, vulnerability, CVSS.",
+      "scripts": [
+        "gen_sec_report.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-security-scan",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当测试工程师需要执行或规划应用安全测试（AST）时使用。本技能提供 OWASP Top 10 人工核查清单，以及 DAST（ZAP）、SAST（Semgrep）、依赖 CVE 扫描（Trivy）的使用指引， 并自带确定性的本地密钥 / PII 泄露扫描脚本。触发词：\"安全测试\"、\"安全扫描\"、 \"漏洞扫描\"、\"OWASP\"、\"代码安全\"、\"密钥泄露检查\"。 英文触发词（English triggers）：security scanning, OWASP, SAST, DAST.",
+      "scripts": [
+        "parse_zap.py",
+        "scan_secrets.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-synthetic-monitoring",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "合成监控规格治理门禁技能：校验合成监控旅程规格是否「受治理」——业务关键旅程必须有断言(预期状态/文本)、告警阈值与探测频率；缺失则产出阻断信号，避免无断言/无告警的\"哑\"监控上线后漏报。触发词：\"合成监控\", \"synthetic monitoring\", \"拨测\", \"探针\", \"黑盒监控\", \"监控门禁\", or after qa-perf-analysis. 英文触发词（English triggers）：synthetic monitoring, black-box monitoring, probe.",
+      "scripts": [
+        "_common.py",
+        "monitor_gate.py"
+      ],
+      "has_references": true,
+      "tier": 2,
+      "runtime_dependencies": [],
+      "verified_by": "pending:see-§7",
+      "last_verified": "",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-test-analysis",
+      "category": "traditional",
+      "stage": "02-analysis",
+      "description": "当已有结构化需求文档（由 qa-req-spec 产出），需要把它拆解成可测项、识别风险与 模糊点，并生成覆盖正向 / 负向 / 边界的测试点清单时使用。本技能在写用例之前， 会针对待澄清项主动发起澄清对话，避免默认猜测导致漏测。触发词：\"需求分析\"、 \"出测试点\"、\"分析一下这个需求怎么测\"、\"帮我拆解测试点\"，或在 qa-req-spec 产出 之后立即使用。 英文触发词（English triggers）：test analysis, test point, requirement analysis.",
+      "scripts": [],
+      "has_references": true,
+      "tier": 3,
+      "runtime_dependencies": [],
+      "verified_by": "pending:see-§7",
+      "last_verified": "",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-test-case-gen",
+      "category": "traditional",
+      "stage": "03-cases",
+      "description": "当用户已有测试点（来自 qa-test-analysis）或需求，希望直接产出可执行的用例文件、 免去人工调格式时使用。本技能用确定性脚本把结构化用例 JSON 直接生成标准化的 Excel（.xlsx）与 Xmind（.xmind），列名与层级统一、开箱即用。触发词：\"生成测试用例\"、 \"导出 Excel 用例\"、\"导出 Xmind 用例\"、\"把测试点写成用例\"，或在 qa-test-analysis 产出之后使用。 英文触发词（English triggers）：test case generation, Excel cases, Xmind.",
+      "scripts": [
+        "expand_cases.py",
+        "gen_case.py",
+        "trace_matrix.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [
+        "openpyxl"
+      ],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-test-data",
+      "category": "traditional",
+      "stage": "04-testdata",
+      "description": "当用户需要为执行或自动化准备测试数据时使用——边界值 / 等价类取值、异常输入、 批量造数，或对敏感字段做 PII 脱敏。本技能按字段规格生成 CSV/JSON 数据，并对标注 字段自动打码，避免真实个人信息进入测试库。触发词：\"造测试数据\"、\"生成边界值\"、 \"测试数据脱敏\"、\"批量造数\"，或当用例在执行前需要填充输入数据时使用。 英文触发词（English triggers）：test data, data generation, PII masking.",
+      "scripts": [
+        "gen_data.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-test-strategy",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "在项目 / 版本测试启动时使用，产出测试计划 / 测试策略：测试范围、目标、测试类型 覆盖（UI/API/性能/安全）、进度安排、准入准出标准与风险应对。触发词：\"测试计划\"、 \"测试策略\"、\"测试方案\"、\"测试规划\"，或在 qa-req-spec 启动一轮变更之前使用。 英文触发词（English triggers）：test strategy, test plan, test coverage.",
+      "scripts": [
+        "gen_strategy.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-ui-automation",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当已有 UI 知识库（qa-ui-kb）、选择器也已用 data-testid 稳定（qa-ui-testid），用户 需要真正搭建并运行 UI 自动化（Playwright）时使用。本技能根据页面描述 JSON 生成 Page Object 页面对象骨架与冒烟用例，并说明如何用 Playwright + Allure 执行出报告。 触发词：\"生成 UI 自动化\"、\"写 Playwright 脚本\"、\"UI 页面对象\"、\"UI 冒烟测试\"， 或在 qa-ui-kb / qa-ui-testid 之后使用。 英文触发词（English triggers）：UI automation, Playwright, page object.",
+      "scripts": [
+        "locator_health.py",
+        "page_object_gen.py",
+        "quality_score.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [
+        "playwright"
+      ],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-ui-kb",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当用户启动或维护 UI 自动化，需要沉淀一份稳定、可供 AI 读取的被测页面知识库， 让生成的 Playwright/Cypress 脚本使用正确且耐用的选择器而不是靠猜时使用。本技能 定义三层知识库（元素描述 / 操作模式 / 选择器规则）、四层代码架构，以及选择器 优先级规范。触发词：\"建 UI 知识库\"、\"UI 自动化怎么组织\"、\"页面结构怎么沉淀\"， 或在 qa-ui-automation 之前使用。 英文触发词（English triggers）：UI knowledge base, selector, page structure.",
+      "scripts": [],
+      "has_references": true,
+      "tier": 3,
+      "runtime_dependencies": [],
+      "verified_by": "pending:see-§7",
+      "last_verified": "",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-ui-testid",
+      "category": "traditional",
+      "stage": "06-execution",
+      "description": "当用户希望通过给前端代码批量补加稳定的 data-testid 属性来让 UI 自动化选择器更耐用， 或苦于页面每次重构脚本就大面积失效时使用。本技能扫描 React/Vue/HTML 源码，找出缺少 data-testid 的交互元素，按命名规则生成唯一标识，并以预览（dry-run）或写入（write） 方式输出清单 manifest。触发词：\"补 data-testid\"、\"扫描前端加测试属性\"、 \"选择器不稳定\"、\"UI 自动化定位痛点\"，或在 qa-ui-automation 之前用于稳定选择器。 英文触发词（English triggers）：data-testid, selector stability, test attribute.",
+      "scripts": [
+        "scan_testid.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-unit-tdd",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "单元/TDD 方法学健康度评估技能：基于测试金字塔占比、行覆盖率、失败用例、测试/代码比等指标，评估单元测试健康度， 存在方法学失衡（金字塔倒挂）或覆盖率/失败不达标时产出阻断信号，守住「重 E2E 轻单测」的反模式。触发词： \"单元测试\", \"TDD\", \"测试金字塔\", \"覆盖率门禁\", \"单测健康度\", \"测试占比\". 英文触发词（English triggers）：unit testing, TDD, test pyramid, coverage.",
+      "scripts": [
+        "_common.py",
+        "coverage_check.py",
+        "unit_health.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    },
+    {
+      "name": "qa-visual-regression",
+      "category": "traditional",
+      "stage": "cross_cutting",
+      "description": "视觉回归治理门禁：对比已落盘的基线快照与当前快照（DOM 结构 + 关键视觉属性，**不截图、不调浏览器**），识别布局/结构/样式回归， 存在布局级回归时产出阻断信号，守住「改一处崩一片」的 UI 底线。真实像素级对比须接 Percy/Chromatic。触发词： \"视觉回归\", \"visual regression\", \"UI 回归\", \"快照对比\", \"界面走样\", or after qa-ui-automation. 英文触发词（English triggers）：visual regression, snapshot, UI diff.",
+      "scripts": [
+        "visual_diff.py"
+      ],
+      "has_references": true,
+      "tier": 1,
+      "runtime_dependencies": [],
+      "verified_by": "manual:smoke+ci:run_all_tests",
+      "last_verified": "2026-08-14",
+      "orchestrated": true
+    }
+  ]
+}

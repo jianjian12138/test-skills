@@ -1,0 +1,42 @@
+{
+  "base_url": "https://api.example.com",
+  "endpoints": {
+    "create_order": {
+      "method": "POST",
+      "path": "/order",
+      "weight": 5,
+      "json": {"sku": "A1", "qty": 1}
+    },
+    "query_order": {
+      "method": "GET",
+      "path": "/order/{id}",
+      "weight": 3
+    },
+    "pay_order": {
+      "method": "POST",
+      "path": "/order/{id}/pay",
+      "weight": 2,
+      "json": {"channel": "balance"}
+    }
+  },
+  "scenarios": [
+    {
+      "name": "load_peak",
+      "type": "load",
+      "users": 500,
+      "spawn_rate": 50,
+      "duration": 600,
+      "think_time": 1.0,
+      "endpoints": ["create_order", "query_order", "pay_order"]
+    },
+    {
+      "name": "stress_ramp",
+      "type": "stress",
+      "users": 2000,
+      "spawn_rate": 100,
+      "duration": 300,
+      "think_time": 0.5,
+      "endpoints": ["create_order", "query_order"]
+    }
+  ]
+}

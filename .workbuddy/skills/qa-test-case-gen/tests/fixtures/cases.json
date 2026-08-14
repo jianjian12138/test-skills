@@ -1,0 +1,13 @@
+{
+  "title": "示例模块测试用例（含正向/负向/边界，供 selftest 真实消费，R-29 修复）",
+  "cases": [
+    {"id": "TC-001", "covers": "TP-001", "name": "正确账号密码登录", "type": "正向", "priority": "P0"},
+    {"id": "TC-002", "covers": "TP-002", "name": "订单支付成功", "type": "正向", "priority": "P0"},
+    {"id": "TC-003", "covers": "TP-001", "name": "错误密码登录被拒", "type": "负向", "priority": "P1"},
+    {"id": "TC-004", "covers": "TP-002", "name": "支付金额为负被拒", "type": "边界", "priority": "P1"}
+  ],
+  "fields": [
+    {"name": "password", "type": "string", "min": 6, "max": 32, "module": "登录"},
+    {"name": "amount", "type": "number", "min": 0, "max": 100000, "module": "支付"}
+  ]
+}

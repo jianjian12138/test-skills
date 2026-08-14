@@ -1,0 +1,18 @@
+{
+  "journeys": [
+    {
+      "name": "checkout-flow",
+      "business_critical": true,
+      "frequency": "5m",
+      "alert_p95_s": 2.0,
+      "steps": [
+        {
+          "url": "https://shop.example.com/checkout",
+          "method": "GET",
+          "expected_status": 200,
+          "expected_text": "结算"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "rows": 3,
+  "seed": 7,
+  "fields": [
+    {"name": "age", "type": "int", "min": 0, "max": 120},
+    {"name": "nickname", "type": "string", "min_len": 1, "max_len": 20},
+    {"name": "phone", "type": "phone"},
+    {"name": "email", "type": "email"},
+    {"name": "status", "type": "enum", "values": ["active", "disabled"]}
+  ],
+  "pii_mask": ["nickname", "phone", "email"]
+}

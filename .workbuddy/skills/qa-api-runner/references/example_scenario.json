@@ -1,0 +1,24 @@
+{
+  "base_url": "https://api.example.com",
+  "env": {},
+  "global_headers": {"Content-Type": "application/json"},
+  "cases": [
+    {
+      "id": "C01",
+      "name": "用户登录获取token",
+      "request": {"method": "POST", "path": "/api/v1/login", "json": {"username": "test", "password": "123456"}},
+      "extract": {"token": "$.data.token"},
+      "assert": [
+        {"eq": ["$.code", 0]},
+        {"contains": ["$.msg", "success"]}
+      ]
+    },
+    {
+      "id": "C02",
+      "name": "携带token获取当前用户",
+      "depends": "C01",
+      "request": {"method": "GET", "path": "/api/v1/user/me", "headers": {"Authorization": "Bearer ${token}"}},
+      "assert": [{"eq": ["$.code", 0]}, {"exists": ["$.data.userId"]}]
+    }
+  ]
+}

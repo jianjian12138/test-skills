@@ -1,0 +1,16 @@
+stages:
+  - qa
+
+image: python:3.13
+
+# 真实接入 QA skills 套件门禁；R-02 硬化：统一门禁入口跑齐四道闸 + REGISTRY 派生校验 + 严格闸。
+# 任一阶段非零退出即阻断合并。
+gates:
+  stage: qa
+  script:
+    - python .workbuddy/skills/tools/run_gates.py
+
+security:
+  stage: qa
+  script:
+    - python .workbuddy/skills/qa-security-scan/scripts/scan_secrets.py --path . --signals-dir signals

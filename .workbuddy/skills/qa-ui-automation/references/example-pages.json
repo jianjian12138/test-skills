@@ -1,0 +1,22 @@
+{
+  "base_url": "https://app.example.com",
+  "pages": [
+    {
+      "name": "LoginPage",
+      "route": "/login",
+      "elements": [
+        {"name": "username", "type": "input", "testid": "login-username"},
+        {"name": "password", "type": "input", "testid": "login-password"},
+        {"name": "submit", "type": "button", "testid": "login-submit"}
+      ]
+    },
+    {
+      "name": "HomePage",
+      "route": "/",
+      "elements": [
+        {"name": "add_config", "type": "button", "testid": "home-add-config"},
+        {"name": "config_list", "type": "button", "testid": "home-config-list"}
+      ]
+    }
+  ]
+}
