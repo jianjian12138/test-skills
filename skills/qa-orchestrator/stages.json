@@ -1,0 +1,99 @@
+{
+  "version": 2,
+  "stages": [
+    {
+      "dir": "01-requirement",
+      "title": "需求结构化",
+      "skills": ["qa-req-spec"],
+      "artifacts": ["requirement.md", "reqs.json"],
+      "alternates": [],
+      "optional": false
+    },
+    {
+      "dir": "02-analysis",
+      "title": "需求分析 + 测试点",
+      "skills": ["qa-test-analysis"],
+      "artifacts": ["analysis.md", "testpoints.md"],
+      "alternates": [],
+      "optional": false
+    },
+    {
+      "dir": "03-cases",
+      "title": "测试用例设计",
+      "skills": ["qa-test-case-gen"],
+      "artifacts": ["cases.xlsx", "cases.xmind", "cases.json"],
+      "alternates": [],
+      "optional": false
+    },
+    {
+      "dir": "04-testdata",
+      "title": "测试数据 + 环境",
+      "skills": ["qa-test-data", "qa-env-config"],
+      "artifacts": ["data.csv", ".env", "testdata.json"],
+      "alternates": [],
+      "optional": true
+    },
+    {
+      "dir": "05-api",
+      "title": "接口文档",
+      "skills": ["qa-api-doc"],
+      "artifacts": ["api-doc.md", "api-doc.json", "openapi.json"],
+      "alternates": [],
+      "optional": false
+    },
+    {
+      "dir": "06-execution",
+      "title": "执行（接口/UI/性能/安全/探索/兼容）",
+      "skills": ["qa-api-runner"],
+      "artifacts": ["results.json", "locustfile.py", "plan.jmx", "report.md", "security_findings.json"],
+      "alternates": ["qa-ui-automation", "qa-perf-locust", "qa-perf-jmeter",
+        "qa-security-scan", "qa-exploratory", "qa-compat-matrix", "qa-api-contract",
+        "qa-mobile-autotest", "qa-perf-design", "qa-ui-testid", "qa-ui-kb", "qa-execution"],
+      "optional": false
+    },
+    {
+      "dir": "07-report",
+      "title": "报告 + 缺陷 + 上线",
+      "skills": ["qa-report"],
+      "artifacts": ["test-report.md", "test-report.json", "bug_report.json"],
+      "alternates": ["qa-perf-analysis", "qa-security-report", "qa-bug-report",
+        "qa-bug-verify", "qa-release-check"],
+      "optional": false
+    },
+    {
+      "dir": "08-archive",
+      "title": "归档 + CI + 策略",
+      "skills": ["qa-archive"],
+      "artifacts": ["archive.zip", "ci.yaml", "test-strategy.md"],
+      "alternates": [],
+      "optional": false
+    }
+  ],
+  "cross_cutting": [
+    "qa-risk-based",
+    "qa-test-strategy",
+    "qa-ci",
+    "qa-mutation",
+    "qa-flaky-detect",
+    "qa-a11y",
+    "qa-visual-regression",
+    "qa-unit-tdd",
+    "qa-chaos",
+    "qa-code-review",
+    "qa-synthetic-monitoring"
+  ],
+  "agent_testing": {
+    "title": "Agent 测试（独立类目，不混入 8 阶段产品生命周期）",
+    "emits_signals": true,
+    "skills": {
+      "qa-agent-eval": ["评测", "能力", "指标", "pass@k", "pass^k", "成功率", "benchmark", "ground-truth", "判分", "度量", "eval"],
+      "qa-agent-security": ["红队", "安全", "攻击", "asr", "越权", "泄露", "注入", "逃逸", "拒答", "对抗", "security", "attack"]
+    }
+  },
+  "domain_extensions": {
+    "_comment": "领域可扩展插槽（W7 增强）：平台强保障节点不可改（locked_stages），领域节点可定制并走同一上报协议。生产默认 insert/replace 为空（平台锁定基线）；团队可在自有 stages.json 覆盖本段以插入领域阶段或替换非锁定阶段。",
+    "locked_stages": ["01-requirement", "02-analysis", "07-report", "08-archive"],
+    "insert": [],
+    "replace": {}
+  }
+}

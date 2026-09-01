@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "maintained_by": "qa-agent-eval",
+  "updated": "2026-08-11",
+  "description": "评测集版本化运营（W8）：稳定核心集 + 挑战集，带版本号/维护人/更新时间。gen_task 生成的任务按 sample_class 自动归入 stable_core（非风险类）或 challenge（风险类）。",
+  "sets": {
+    "stable_core": ["agent_task_001", "agent_task_002", "agent_task_003", "agent_task_004"],
+    "challenge": ["agent_task_005"]
+  },
+  "count": 5,
+  "note": "示例入口；实际稳定/挑战集由 gen_task --out 生成时按 sample_class 自动划分（见各任务目录 manifest.json 的 sets 字段）。"
+}

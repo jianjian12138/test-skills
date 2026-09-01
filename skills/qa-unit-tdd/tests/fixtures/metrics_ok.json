@@ -1,0 +1,5 @@
+{
+  "unit": 120, "integration": 30, "e2e": 20,
+  "line_coverage": 0.85, "branch_coverage": 0.75,
+  "failed_tests": 0, "test_loc": 2000, "code_loc": 4000
+}

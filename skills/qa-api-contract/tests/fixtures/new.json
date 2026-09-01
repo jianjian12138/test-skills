@@ -1,0 +1,93 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Demo", "version": "2.0.0" },
+  "servers": [{ "url": "https://api.example.com/v2" }],
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": { "type": "http", "scheme": "bearer" },
+      "oauth": { "type": "oauth2", "flows": {} }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": [],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string", "nullable": false, "maxLength": 50 },
+          "email": { "type": "integer" },
+          "status": { "type": "string", "enum": ["active", "pending", "vip"] }
+        }
+      },
+      "Payload": {
+        "type": "object",
+        "required": ["title", "tags", "newField"],
+        "properties": {
+          "title": { "type": "integer" },
+          "tags": { "type": "array", "items": { "type": "string" }, "maxItems": 5 },
+          "newField": { "type": "string" },
+          "variant": { "oneOf": [{ "type": "string" }, { "type": "integer" }] },
+          "variant2": { "anyOf": [{ "type": "string" }, { "type": "integer" }, { "type": "boolean" }] }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "operationId": "listUsers",
+        "parameters": [
+          { "name": "page", "in": "query", "required": true, "schema": { "type": "integer", "format": "int32", "maximum": 100 } },
+          { "name": "sort", "in": "query", "required": false, "schema": { "type": "string", "enum": ["asc", "desc"] } },
+          { "name": "moveMe", "in": "header", "required": false, "schema": { "type": "string" } },
+          { "name": "typeChange", "in": "query", "required": false, "schema": { "type": "integer" } },
+          { "name": "mustHave", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/Payload" } }
+          }
+        },
+        "responses": { "201": { "description": "created" } }
+      }
+    },
+    "/orders": {
+      "get": { "deprecated": true, "responses": { "200": { "description": "ok" } } }
+    },
+    "/secure": {
+      "get": {
+        "security": [{ "oauth": ["read", "write"] }, { "apiKeyAuth": [] }],
+        "responses": { "200": { "description": "ok" } }
+      }
+    },
+    "/secure2": {
+      "get": {
+        "security": [],
+        "responses": { "200": { "description": "ok" } }
+      }
+    },
+    "/free": {
+      "get": {
+        "security": [{ "apiKeyAuth": [] }],
+        "responses": { "200": { "description": "ok" } }
+      }
+    },
+    "/external": {
+      "get": {
+        "responses": {
+          "200": { "description": "ok", "content": { "application/json": { "schema": { "$ref": "https://other.example.com/schema.json#/Foo" } } } }
+        }
+      }
+    }
+  }
+}

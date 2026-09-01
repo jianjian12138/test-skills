@@ -1,0 +1,10 @@
+{
+  "runs": [
+    {"run_id": "r1", "results": {"t_login": true, "t_pay": false, "t_cart": true}},
+    {"run_id": "r2", "results": {"t_login": true, "t_pay": true,  "t_cart": true}},
+    {"run_id": "r3", "results": {"t_login": true, "t_pay": false, "t_cart": true}},
+    {"run_id": "r4", "results": {"t_login": true, "t_pay": true,  "t_cart": true}},
+    {"run_id": "r5", "results": {"t_login": true, "t_pay": false, "t_cart": true}},
+    {"run_id": "r6", "results": {"t_login": true, "t_pay": true,  "t_cart": true}}
+  ]
+}

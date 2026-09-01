@@ -1,0 +1,14 @@
+{
+  "experiments": [
+    {
+      "name": "kill-checkout-pod",
+      "fault": "pod_kill",
+      "target": "svc:checkout",
+      "blast_radius": "single-pod",
+      "steady_state": "availability >= 99.9%",
+      "abort_conditions": ["error_rate > 1%", "p99 > 500ms"],
+      "fallback": "rollback-deploy",
+      "business_critical": true
+    }
+  ]
+}
