@@ -1,4 +1,4 @@
-# 40 项原子 QA 技能全景交付矩阵 (SKILLS_DELIVERY.md — v12.0.0 L6.0)
+# 46 项原子 QA 技能全景交付矩阵 (SKILLS_DELIVERY.md — v12.0.0 L6.0 完整合一版)
 
 | 序号 | 技能 ID | 技能名称 | 生命周期阶段 | 架构层级 | 绑定 MCP 原生工具 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -42,3 +42,9 @@
 | 38 | `qa-shadow-replay` | 流量镜像基准快照沉淀与零代码 Diff 断言（Shadow QA） | `quality_gates_agent` | `L2` | `run_quality_gate` |
 | 39 | `qa-agent-eval` | 被测 AI Agent 能力、τ-bench pass^k 一致性与轨迹可靠性评估 | `quality_gates_agent` | `L2` | `run_quality_gate` |
 | 40 | `qa-agent-security` | OWASP Agentic Top 10 (ASI:2026) 与 AST10 技能层红蓝对抗测试 | `quality_gates_agent` | `L2` | `run_red_blue_swarm` |
+| 41 | `qa-code-review` | 代码质量与可测性静态走查 | `requirements` | `L1` | `route_qa_skills` |
+| 42 | `qa-execution` | 多端自动化测试统一调度执行器 | `ui_mobile` | `L2` | `run_quality_gate` |
+| 43 | `qa-orchestrator` | 测试全生命周期多智能体编排中枢 | `quality_gates_agent` | `L2` | `route_qa_skills` |
+| 44 | `qa-perf-analysis` | 性能瓶颈剖析与火焰图根因诊断 | `performance` | `L2` | `route_qa_skills` |
+| 45 | `qa-security-report` | 安全渗透与合规审计综合评估报告 | `security` | `L1` | `sanitize_sensitive_data` |
+| 46 | `qa-test-strategy` | 全局测试策略制定与质量分层规划 | `requirements` | `L1` | `route_qa_skills` |

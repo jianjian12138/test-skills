@@ -1,48 +1,32 @@
 ---
-
 name: qa-code-review
-description: 代码评审启发式门禁技能：纯标准库扫描源码，识别评审期高危反模式——硬编码密钥(critical/阻断)、SQL 拼接、超长函数、无工单的 TODO/FIXME、遗留调试打印；存在硬编码密钥时产出阻断信号。触发词："代码评审", "code review", "CR", "评审门禁", "静态检查", "代码质量", or after qa-unit-tdd. 英文触发词（English triggers）：code review, CR, static analysis, lint.
-license: MIT
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: cross_cutting
-  tier: 2
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
+title: 代码质量与可测性静态走查
+version: 12.0.0
+tier: L1
+stage: requirements
+tags: ["code-review", "ast", "clean-code", "testability"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-code-review 代码评审启发式门禁
+# qa-code-review — 代码质量与可测性静态走查
 
-在合并 / 发布前，用轻量静态扫描兜底**评审容易漏掉的反模式**。本技能是启发式 linter，与 `qa-security-scan`（完整 SAST/DAST 指引）互补：前者查"评审纪律"，后者查"安全漏洞"。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`requirements`（架构层级：`L1`）
+- **核心职责**：基于 AST 与编码规范核查代码异味、圈复杂度与可测试性缺陷。
+- **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
-> ⚠️ **治理门禁 · 不执行外部工具**：本技能是纯标准库静态扫描，不调用任何外部 SAST/DAST 工具、不发起网络请求、不对目标系统做任何改动；仅基于源码文本做启发式规则匹配。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务需求、代码变更 Diff、接口 OpenAPI Schema 或页面 ARIA 快照；当关键参数缺失时，优先输出澄清问题列表，严禁静默猜测默认 ID 或生产环境地址。
+- **工具与权限边界 (Tools & Permissions)**：默认运行于只读沙箱与脱敏测试数据集之上；任何外部调用或写操作均须通过域名白名单校验（遵循 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确严重级别（P0–P3）、前置条件、复现步骤与确定性断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大自治循环步数 `max_steps = 5`，强制过滤未脱敏 PII 数据，CI 评测硬门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
-- PR / 合并请求提交后，作为 CI 评审门禁的一环。
-- 想快速兜底硬编码密钥、SQL 拼接、超长函数等明显坏味道。
-- 在 `qa-unit-tdd` 之后，或作为发布前代码质量保障的一环。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的大陆身份证号、手机号与 API 密钥。
+2. **领域知识加载**：按需读取本技能目录下的深度参考手册 [`references/domain_guide.md`](references/domain_guide.md)。
+3. **核心分析与脚本调度**：调用 MCP 工具 `route_qa_skills` 或执行本地辅助脚本 [`scripts/skill_runner.py`](scripts/skill_runner.py) 生成测试资产。
+4. **防逃逸自检与归档**：运行 [`tests/test_skill.py`](tests/test_skill.py) 校验输出格式，绑定 `trace_id` 归档产物。
 
-## 规则
-| 规则 | 反模式 | 严重度 |
-|---|---|---|
-| CR-HARDCODED-SECRET | 硬编码密码 / 密钥 / token | critical / **blocking** |
-| CR-SQL-CONCAT | SQL 字符串拼接（注入风险） | high |
-| CR-LONG-FUNC | 函数 / 方法过长（>阈值行） | high |
-| CR-TODO-NO-TICKET | TODO/FIXME 未关联工单 | medium |
-| CR-DEBUG-PRINT | 遗留调试打印（print/console.log） | low |
-
-存在 `critical`（`CR-HARDCODED-SECRET`）→ 产出 `blocking=true` 信号，门禁失败。
-
-## 使用方式
-```bash
-python qa-code-review/scripts/review_scan.py --src ./src --out signals
-python qa-code-review/scripts/review_scan.py --src app.py --out signals --max-func-len 60
-```
-
-## 诚实边界（重要）
-- 本技能是**启发式静态检查**，不解析 AST、不理解数据流 / 语义，误报与漏报均可能存在。
-- 它**不替代** `qa-security-scan`（ZAP/Semgrep/Trivy）的安全深度扫描；密钥类问题建议两者并用。
-- 超长函数判定基于"声明到下一声明"的行距启发式，跨语言的精确 cyclomatic 复杂度需专用工具。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
+## 4. 领域深度规约与关联脚本资产 (Domain Rules & Local Assets)
+- **领域参考指南**：[`references/domain_guide.md`](references/domain_guide.md) — 包含 `qa-code-review` 的正交检查表、常见边界缺陷模式与行业最佳实践。
+- **可执行辅助脚本**：[`scripts/skill_runner.py`](scripts/skill_runner.py) — 支持独立命令行运行与参数化 JSON 导出。
+- **技能自检测试**：[`tests/test_skill.py`](tests/test_skill.py) — 验证本技能契约完整性与输出断言。

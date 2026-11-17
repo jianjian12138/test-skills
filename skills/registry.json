@@ -1,7 +1,7 @@
 {
   "version": "12.0.0",
   "edition": "L6.0 Autonomous Quality Engineering Mesh",
-  "total_skills": 40,
+  "total_skills": 46,
   "skills": [
     {
       "index": 1,
@@ -739,6 +739,114 @@
       "sop_path": "skills/qa-agent-security/SKILL.md",
       "l1_tokens": 42,
       "l2_tokens": 380
+    },
+    {
+      "index": 41,
+      "id": "qa-code-review",
+      "title": "代码质量与可测性静态走查",
+      "stage": "requirements",
+      "tier": "L1",
+      "tags": [
+        "code-review",
+        "ast",
+        "clean-code",
+        "testability"
+      ],
+      "l1_summary": "基于 AST 与编码规范核查代码异味、圈复杂度与可测试性缺陷",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-code-review/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 42,
+      "id": "qa-execution",
+      "title": "多端自动化测试统一调度执行器",
+      "stage": "ui_mobile",
+      "tier": "L2",
+      "tags": [
+        "execution",
+        "runner",
+        "parallel",
+        "shard"
+      ],
+      "l1_summary": "统一编排并并发执行 API、UI 与性能回归测试批次",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-execution/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 43,
+      "id": "qa-orchestrator",
+      "title": "测试全生命周期多智能体编排中枢",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "orchestrator",
+        "multi-agent",
+        "workflow",
+        "state-graph"
+      ],
+      "l1_summary": "跨阶段协调需求分析、造数、执行与门禁评估的主控编排技能",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-orchestrator/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 44,
+      "id": "qa-perf-analysis",
+      "title": "性能瓶颈剖析与火焰图根因诊断",
+      "stage": "performance",
+      "tier": "L2",
+      "tags": [
+        "profiling",
+        "flamegraph",
+        "bottleneck",
+        "gc"
+      ],
+      "l1_summary": "结合 CPU/内存火焰图、GC 日志与线程栈定位性能吞吐瓶颈",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-perf-analysis/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 45,
+      "id": "qa-security-report",
+      "title": "安全渗透与合规审计综合评估报告",
+      "stage": "security",
+      "tier": "L1",
+      "tags": [
+        "security-report",
+        "cvss",
+        "remediation",
+        "owasp"
+      ],
+      "l1_summary": "汇总 OWASP 漏洞评级、CVSS 得分与修复加固路线图",
+      "mcp_tool_binding": "sanitize_sensitive_data",
+      "sop_path": "skills/qa-security-report/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 46,
+      "id": "qa-test-strategy",
+      "title": "全局测试策略制定与质量分层规划",
+      "stage": "requirements",
+      "tier": "L1",
+      "tags": [
+        "strategy",
+        "pyramid",
+        "roi",
+        "shift-left"
+      ],
+      "l1_summary": "制定测试金字塔配比、准入准出标准与分层自动化 ROI 策略",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-test-strategy/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
     }
   ]
 }

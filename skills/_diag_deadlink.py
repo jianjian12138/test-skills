@@ -1,57 +1,32 @@
-import os, re
-SKILLS_ROOT = os.path.abspath(".")
-REF_RE = re.compile(r"(?:\(|\s|`)(references/[A-Za-z0-9_./\-]+\.[A-Za-z0-9]+)")
-LINK_RE = re.compile(r"\]\((references/[^)]+)\)")
-root_refs = os.path.join(SKILLS_ROOT, "references")
-dead = []
-checked = 0
-for r, _, files in os.walk(SKILLS_ROOT):
-    if "SKILL.md" not in files:
-        continue
-    sk = os.path.join(r, "SKILL.md")
-    md = open(sk, encoding="utf-8").read()
-    refs = set()
-    for m in LINK_RE.finditer(md):
-        refs.add(m.group(1))
-    for m in REF_RE.finditer(md):
-        refs.add(m.group(1))
-    for rel in refs:
-        checked += 1
-        local = os.path.normpath(os.path.join(r, rel))
-        shared = os.path.normpath(os.path.join(root_refs, os.path.basename(rel)))
-        if os.path.isfile(local) or os.path.isfile(shared):
-            continue
-        dead.append((os.path.relpath(sk, SKILLS_ROOT), rel))
-for r, _, files in os.walk(SKILLS_ROOT):
-    refdir = os.path.join(r, "references")
-    if not os.path.isdir(refdir):
-        continue
-    for fn in files:
-        if not fn.endswith(".md"):
-            continue
-        rp = os.path.join(refdir, fn)
-        try:
-            rmd = open(rp, encoding="utf-8").read()
-        except Exception:
-            continue
-        refs = set()
-        for m in LINK_RE.finditer(rmd):
-            refs.add(m.group(1))
-        for m in REF_RE.finditer(rmd):
-            refs.add(m.group(1))
-        for rel in refs:
-            checked += 1
-            local = os.path.normpath(os.path.join(r, rel))
-            nested = os.path.normpath(os.path.join(refdir, rel))
-            shared = os.path.normpath(os.path.join(root_refs, os.path.basename(rel)))
-            if os.path.isfile(local) or os.path.isfile(nested) or os.path.isfile(shared):
+#!/usr/bin/env python3
+"""Scans all SKILL.md files to verify zero broken local relative markdown links."""
+
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+
+def scan_deadlinks(repo_root: Path | None = None) -> dict:
+    root = repo_root or Path(__file__).resolve().parents[1]
+    deadlinks: list[str] = []
+    link_re = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+
+    for md_file in sorted((root / "skills").rglob("*.md")):
+        text = md_file.read_text(encoding="utf-8")
+        for match in link_re.finditer(text):
+            target = match.group(1).strip()
+            if target.startswith(("http://", "https://", "#", "mailto:")):
                 continue
-            dead.append((os.path.relpath(rp, SKILLS_ROOT), rel))
-print("=== CHECKED %d references, DEAD %d ===" % (checked, len(dead)))
-by_skill = {}
-for s, rel in dead:
-    by_skill.setdefault(s, []).append(rel)
-for s in sorted(by_skill):
-    print("\n[%s]" % s)
-    for rel in sorted(set(by_skill[s])):
-        print("   ", rel)
+            target_path = (md_file.parent / target).resolve()
+            if not target_path.exists():
+                deadlinks.append(f"{md_file.relative_to(root)} -> {target}")
+
+    return {"deadlink_count": len(deadlinks), "deadlinks": deadlinks, "passed": len(deadlinks) == 0}
+
+
+if __name__ == "__main__":
+    res = scan_deadlinks()
+    print(json.dumps(res, ensure_ascii=False, indent=2))
+    raise SystemExit(0 if res["passed"] else 1)

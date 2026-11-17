@@ -1,73 +1,32 @@
 ---
-
 name: qa-execution
-description: |-
-  当一个版本需要把多类测试（UI / API / 性能 / 安全）统一编排与跟踪时使用。本技能
-  从用例 + 结果 JSON 生成执行进度矩阵（按模块 / 类型 / 状态交叉统计），并把每个
-  失败项路由到对应的下游技能处理。触发词："执行编排"、"测试进度矩阵"、
-  "跨类型执行"、"测试进度跟踪"。
-  英文触发词（English triggers）：test execution, test progress, orchestration.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 06-execution
-  tier: 1
+title: 多端自动化测试统一调度执行器
+version: 12.0.0
+tier: L2
+stage: ui_mobile
+tags: ["execution", "runner", "parallel", "shard"]
+mcp_tool_binding: run_quality_gate
 ---
-# qa-execution — 跨类型测试执行编排
+# qa-execution — 多端自动化测试统一调度执行器
 
-把 UI / 接口 / 性能 / 安全 多类测试**统一编排、统一跟踪**：一张进度矩阵，
-看清「哪些模块、哪类测试、什么状态、谁负责、卡在哪」，并自动把失败项路由到下游。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`ui_mobile`（架构层级：`L2`）
+- **核心职责**：统一编排并并发执行 API、UI 与性能回归测试批次。
+- **关联 MCP 原生工具**：`run_quality_gate`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
-> 一个大版本往往同时跑多类测试。没有编排，结果散落各处，复盘靠人肉拼。本技能统一视角。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务需求、代码变更 Diff、接口 OpenAPI Schema 或页面 ARIA 快照；当关键参数缺失时，优先输出澄清问题列表，严禁静默猜测默认 ID 或生产环境地址。
+- **工具与权限边界 (Tools & Permissions)**：默认运行于只读沙箱与脱敏测试数据集之上；任何外部调用或写操作均须通过域名白名单校验（遵循 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确严重级别（P0–P3）、前置条件、复现步骤与确定性断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大自治循环步数 `max_steps = 5`，强制过滤未脱敏 PII 数据，CI 评测硬门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的大陆身份证号、手机号与 API 密钥。
+2. **领域知识加载**：按需读取本技能目录下的深度参考手册 [`references/domain_guide.md`](references/domain_guide.md)。
+3. **核心分析与脚本调度**：调用 MCP 工具 `run_quality_gate` 或执行本地辅助脚本 [`scripts/skill_runner.py`](scripts/skill_runner.py) 生成测试资产。
+4. **防逃逸自检与归档**：运行 [`tests/test_skill.py`](tests/test_skill.py) 校验输出格式，绑定 `trace_id` 归档产物。
 
-- 一个版本涉及 UI + 接口 + 性能 + 安全多类测试。
-- 用户说「执行编排」「测试进度矩阵」「跨类型执行」「测试进度跟踪」。
-- 要在 `qa-report` 之前先摸清整体进度与阻塞。
-
-## 操作流程
-
-### 步骤 1 — 汇总用例与结果
-
-各专项技能跑完后，把用例 + 结果归一成如下 JSON（`references/matrix-schema.md`）：
-
-```json
-{"change": "订单v2", "cases": [
-  {"module":"下单","type":"api","name":"创建订单-正常","priority":"P0","status":"passed","owner":"张三"},
-  {"module":"下单","type":"ui","name":"下单页-冒烟","priority":"P1","status":"failed","owner":"李四"}
-]}
-```
-
-### 步骤 2 — 生成矩阵
-
-```bash
-python scripts/gen_matrix.py --cases cases.json --out matrix.md
-```
-
-产出 `matrix.md`：总览（总数/通过/失败/阻塞/未执行 + 通过率）、
-按模块×类型交叉统计、逐用例明细表，以及**失败项路由建议**
-（api/ui 失败→`qa-bug-report`；性能不达标→`qa-perf-analysis` 归因；安全高危→`qa-security-report`）。
-
-### 步骤 3 — 衔接
-
-- 失败项转 `qa-bug-report` 提缺陷。
-- 整体结论交给 `qa-report` 出质量评估。
-- 阻塞项标记，等 `qa-bug-verify` / `qa-release-check`。
-
-## Workflow × Agent 边界与原子操作（W9 增强）
-
-明确哪些环节走**预定义 Workflow**、哪些交给 **Agent 自主**（印证本包设计，补边界声明）：
-- **Workflow（确定性、可断言）**：环境准备、账号 / 配置函数化、用例编排、结果汇总——走固定脚本，产出可审计证据。
-- **Agent 自主（需观察与决策）**：识别被测系统状态、决定动作、对结果做断言证据采集——交给 Agent 的 O-T-A-R 循环。
-
-8 类原子操作（aiTap / aiInput / aiScroll / aiHover / aiWait / aiAssert / aiNavigate / aiScreenshot）统一接口，
-每个动作返回结构化证据；Workflow 与 Agent 共用同一原子操作层，保证证据可被发布门禁聚合。
-
-## 与上下游衔接
-
-- 输入：各专项技能的产物（用例 + 结果）。
-- 输出：`qa-report`（汇总）、`qa-bug-report`（失败项）、`qa-release-check`（上线门禁）。
+## 4. 领域深度规约与关联脚本资产 (Domain Rules & Local Assets)
+- **领域参考指南**：[`references/domain_guide.md`](references/domain_guide.md) — 包含 `qa-execution` 的正交检查表、常见边界缺陷模式与行业最佳实践。
+- **可执行辅助脚本**：[`scripts/skill_runner.py`](scripts/skill_runner.py) — 支持独立命令行运行与参数化 JSON 导出。
+- **技能自检测试**：[`tests/test_skill.py`](tests/test_skill.py) — 验证本技能契约完整性与输出断言。

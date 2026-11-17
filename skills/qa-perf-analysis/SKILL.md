@@ -1,83 +1,32 @@
 ---
-
 name: qa-perf-analysis
-description: |-
-  在 Locust 压测（来自 qa-perf-locust）执行完成后使用，把原始 CSV 产物转成可读结论：
-  总吞吐、延迟分位（P50/P95/P99）、错误率、瓶颈定位归因，以及 SLA 是否达标的判定。
-  触发词："分析压测结果"、"性能结果分析"、"瓶颈定位"、"Locust报告解读"，或在
-  qa-perf-locust 之后使用。
-  英文触发词（English triggers）：performance analysis, latency, SLA, bottleneck.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 07-report
-  tier: 1
+title: 性能瓶颈剖析与火焰图根因诊断
+version: 12.0.0
+tier: L2
+stage: performance
+tags: ["profiling", "flamegraph", "bottleneck", "gc"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-perf-analysis — 性能结果分析与瓶颈定位
+# qa-perf-analysis — 性能瓶颈剖析与火焰图根因诊断
 
-把 Locust 跑出来的 CSV（`results_stats.csv` + `results_history.csv`）变成
-**可读结论**：总吞吐、P50/P95/P99 延迟、错误率、瓶颈在哪、SLA 是否达标。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`performance`（架构层级：`L2`）
+- **核心职责**：结合 CPU/内存火焰图、GC 日志与线程栈定位性能吞吐瓶颈。
+- **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
-> 性能结果不是「看个平均数就完」。看分位延迟、看拐点、看资源趋势，才能定位瓶颈。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务需求、代码变更 Diff、接口 OpenAPI Schema 或页面 ARIA 快照；当关键参数缺失时，优先输出澄清问题列表，严禁静默猜测默认 ID 或生产环境地址。
+- **工具与权限边界 (Tools & Permissions)**：默认运行于只读沙箱与脱敏测试数据集之上；任何外部调用或写操作均须通过域名白名单校验（遵循 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确严重级别（P0–P3）、前置条件、复现步骤与确定性断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大自治循环步数 `max_steps = 5`，强制过滤未脱敏 PII 数据，CI 评测硬门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的大陆身份证号、手机号与 API 密钥。
+2. **领域知识加载**：按需读取本技能目录下的深度参考手册 [`references/domain_guide.md`](references/domain_guide.md)。
+3. **核心分析与脚本调度**：调用 MCP 工具 `route_qa_skills` 或执行本地辅助脚本 [`scripts/skill_runner.py`](scripts/skill_runner.py) 生成测试资产。
+4. **防逃逸自检与归档**：运行 [`tests/test_skill.py`](tests/test_skill.py) 校验输出格式，绑定 `trace_id` 归档产物。
 
-- Locust 跑完，拿到 `results_stats.csv` / `results_history.csv`。
-- 用户说「分析压测结果」「性能结果分析」「瓶颈定位」「Locust 报告解读」。
-
-## 操作流程
-
-### 步骤 1 — 运行产物就位
-
-确保 Locust 用 `--csv=results` 导出了：
-- `results_stats.csv`（聚合 + 每接口统计）
-- `results_history.csv`（时间序列）
-
-### 步骤 2 — 分析
-
-```bash
-python scripts/analyze_locust.py \
-    --stats results_stats.csv \
-    --history results_history.csv \
-    --sla sla.json \
-    --out analysis.md
-```
-
-`sla.json`（可选）格式：
-```json
-{"p95_ms": 500, "error_rate": 0.01, "min_tps": 1000}
-```
-
-### 步骤 3 — 读结论
-
-`analysis.md` 含：
-- **总览**：总请求数、失败率、峰值 RPS、P95/P99。
-- **逐接口**：吞吐、延迟分位、失败数。
-- **瓶颈诊断**：基于启发式规则给出可能瓶颈（见下）。
-- **SLA 判定**：达标 / 不达标。
-
-### 瓶颈启发式（自动判定）
-
-| 信号 | 可能瓶颈 |
-| --- | --- |
-| 错误率随并发上升 | 服务端过载 / 依赖限流 / 连接池耗尽 |
-| 延迟高但 RPS 上不去 | 单请求重（DB 慢查询 / 序列化 / 外部调用） |
-| 用户涨、RPS  plateau | 到达系统饱和点（CPU/线程/连接） |
-| history 中响应时间持续上涨 | 内存泄漏 / 缓存失效 / 连接堆积 |
-| P99 远高于 P95 | 长尾（GC / 锁竞争 / 慢依赖） |
-
-## 深化能力（V2）
-
-- 拐点（Knee）检测：在总览中输出 RPS 峰值出现的并发点，并判断是否已越过系统饱和点；
-  资源维度关联建议（CPU / 内存 / 连接）辅助定位瓶颈根因。
-- 瓶颈启发式、拐点检测说明与测试清单见 `references/checklist.md`。
-
-## 与上下游衔接
-
-- 输入：`qa-perf-locust` 的 CSV 产物。
-- 输出：结论进入 `qa-report` / 上线评审；不达标项转 `qa-bug-report`。
-- JMeter 路线：请用 `qa-perf-jmeter`（`gen_jmx.py` + `analyze_jmeter.py`），
-  与本技能同口径但专用于 `.jmx` 与 JMeter 结果 CSV。
+## 4. 领域深度规约与关联脚本资产 (Domain Rules & Local Assets)
+- **领域参考指南**：[`references/domain_guide.md`](references/domain_guide.md) — 包含 `qa-perf-analysis` 的正交检查表、常见边界缺陷模式与行业最佳实践。
+- **可执行辅助脚本**：[`scripts/skill_runner.py`](scripts/skill_runner.py) — 支持独立命令行运行与参数化 JSON 导出。
+- **技能自检测试**：[`tests/test_skill.py`](tests/test_skill.py) — 验证本技能契约完整性与输出断言。

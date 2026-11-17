@@ -35,7 +35,7 @@ class TestUniversalQASkillsV12(unittest.TestCase):
     def test_01_registry_and_progressive_router(self) -> None:
         router = ProgressiveSkillRouter(REPO_ROOT)
         all_skills = router.list_all()
-        self.assertEqual(len(all_skills), 40)
+        self.assertEqual(len(all_skills), 46)
 
         routed = router.route("Playwright ARIA 无障碍树选择器自愈", top_k=4)
         self.assertLessEqual(routed["candidate_count"], 4)
@@ -151,6 +151,19 @@ class TestUniversalQASkillsV12(unittest.TestCase):
         eval_summary = run_evaluation_suite(k=5)
         self.assertTrue(eval_summary["gate_passed"])
         self.assertGreaterEqual(eval_summary["avg_tau_pass_hat_k_pct"], 85.0)
+
+
+
+    def test_10_portability_and_zero_deadlinks(self) -> None:
+        from skills._diag_deadlink import scan_deadlinks
+        from skills.tools.validate_portability import validate_repo_portability
+
+        port_res = validate_repo_portability(REPO_ROOT)
+        self.assertTrue(port_res["portability_passed"])
+        self.assertEqual(port_res["registered_skills_count"], 46)
+
+        dl_res = scan_deadlinks(REPO_ROOT)
+        self.assertTrue(dl_res["passed"])
 
 
 if __name__ == "__main__":

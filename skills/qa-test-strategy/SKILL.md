@@ -1,61 +1,32 @@
 ---
-
 name: qa-test-strategy
-description: |-
-  在项目 / 版本测试启动时使用，产出测试计划 / 测试策略：测试范围、目标、测试类型
-  覆盖（UI/API/性能/安全）、进度安排、准入准出标准与风险应对。触发词："测试计划"、
-  "测试策略"、"测试方案"、"测试规划"，或在 qa-req-spec 启动一轮变更之前使用。
-  英文触发词（English triggers）：test strategy, test plan, test coverage.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: cross_cutting
-  tier: 1
+title: 全局测试策略制定与质量分层规划
+version: 12.0.0
+tier: L1
+stage: requirements
+tags: ["strategy", "pyramid", "roi", "shift-left"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-test-strategy — 测试计划 / 策略
+# qa-test-strategy — 全局测试策略制定与质量分层规划
 
-在项目/版本启动时，先有**测试策略**再动手：范围、目标、测试类型覆盖、
-进度、准入准出、风险。它是后续 `qa-req-spec` / `qa-test-analysis` 的总纲。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`requirements`（架构层级：`L1`）
+- **核心职责**：制定测试金字塔配比、准入准出标准与分层自动化 ROI 策略。
+- **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
-> 没策略就开测，容易漏类型、缺准出、进度失控。策略是测试的合同。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务需求、代码变更 Diff、接口 OpenAPI Schema 或页面 ARIA 快照；当关键参数缺失时，优先输出澄清问题列表，严禁静默猜测默认 ID 或生产环境地址。
+- **工具与权限边界 (Tools & Permissions)**：默认运行于只读沙箱与脱敏测试数据集之上；任何外部调用或写操作均须通过域名白名单校验（遵循 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确严重级别（P0–P3）、前置条件、复现步骤与确定性断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大自治循环步数 `max_steps = 5`，强制过滤未脱敏 PII 数据，CI 评测硬门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的大陆身份证号、手机号与 API 密钥。
+2. **领域知识加载**：按需读取本技能目录下的深度参考手册 [`references/domain_guide.md`](references/domain_guide.md)。
+3. **核心分析与脚本调度**：调用 MCP 工具 `route_qa_skills` 或执行本地辅助脚本 [`scripts/skill_runner.py`](scripts/skill_runner.py) 生成测试资产。
+4. **防逃逸自检与归档**：运行 [`tests/test_skill.py`](tests/test_skill.py) 校验输出格式，绑定 `trace_id` 归档产物。
 
-- 新项目 / 新版本启动，需要测试规划。
-- 用户说「测试计划」「测试策略」「测试方案」「测试规划」。
-
-## 操作流程
-
-### 步骤 1 — 填策略输入
-
-```json
-{"project":"订单中台","version":"v2.0","scope":"下单/支付/退款",
- "objectives":["核心链路零P0","性能达标"],"types":["ui","api","perf","security"],
- "schedule":"2周","entry":["需求冻结","环境就绪"],"exit":["用例执行率100%","无P0遗留"],
- "risks":["支付依赖第三方不稳定"]}
-```
-
-### 步骤 2 — 生成
-
-```bash
-python scripts/gen_strategy.py --strategy strategy.json --out test_strategy.md
-```
-
-产出 `test_strategy.md`：项目概述、测试范围、目标、各类型测试策略、
-进度、准入准出、风险与应对。
-
-### 步骤 3 — 衔接
-
-策略定好后，进入 `qa-req-spec` 做需求结构化，再逐层设计。
-
-## 与上下游衔接
-
-- 上游：项目启动 / 版本规划。
-- 下游：总纲驱动 `qa-req-spec`、`qa-test-analysis`、`qa-execution`、各专项技能。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
+## 4. 领域深度规约与关联脚本资产 (Domain Rules & Local Assets)
+- **领域参考指南**：[`references/domain_guide.md`](references/domain_guide.md) — 包含 `qa-test-strategy` 的正交检查表、常见边界缺陷模式与行业最佳实践。
+- **可执行辅助脚本**：[`scripts/skill_runner.py`](scripts/skill_runner.py) — 支持独立命令行运行与参数化 JSON 导出。
+- **技能自检测试**：[`tests/test_skill.py`](tests/test_skill.py) — 验证本技能契约完整性与输出断言。
