@@ -1,73 +1,27 @@
 ---
-
 name: qa-bug-report
-description: |-
-  当测试发现缺陷、需要产出结构化缺陷单，或需要提交到 TAPD / 禅道 / Jira 时使用。
-  本技能把缺陷 JSON 转成标准化的 Markdown 缺陷报告，并生成主流缺陷平台可直接使用的
-  字段映射载荷。触发词："提交缺陷"、"提bug"、"缺陷单"、"bug报告"，或在 qa-execution /
-  qa-api-runner / qa-perf-analysis / qa-security-report 发现失败之后使用。
-  英文触发词（English triggers）：bug report, defect, issue tracker.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 07-report
-  tier: 1
+title: 高复现率结构化缺陷单生成与根因定位辅助
+version: 12.0.0
+tier: L1
+stage: release_ops
+tags: ["bug", "defect", "reproduce", "har", "trace"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-bug-report — 缺陷提交（结构化 + 对接平台）
+# qa-bug-report — 高复现率结构化缺陷单生成与根因定位辅助
 
-把一次失败转化成一个**规范、可复现、可对接**的缺陷单：
-标准字段（标题/模块/类型/严重级/优先级/环境/步骤/期望/实际/证据）+ 给
-TAPD / 禅道 / Jira 的字段映射，减少「开发看不懂、复现不了」的扯皮。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`release_ops`（架构层级：`L1`）
+- **核心职责**：整合最小复现步骤、环境快照、trace_id 与期望/实际对比生成标准缺陷单。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> 缺陷质量 = 复现步骤是否清晰 + 严重级是否准确。先定级，再写步骤。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
-
-- 测试发现失败（`qa-execution` 路由来的 api/ui 失败、`qa-security-report` 高危项）。
-- 用户说「提交缺陷」「提bug」「缺陷单」「bug 报告」。
-
-## 操作流程
-
-### 步骤 1 — 填缺陷 JSON
-
-按 `references/bug-schema.md` 填：
-
-```json
-{"title":"下单页提交后无响应","module":"下单","type":"ui","severity":"S1",
- "priority":"P0","env":"staging","reporter":"张三","assignee":"李四",
- "steps":["打开下单页","填收货地址","点提交"],"expected":"订单创建成功","actual":"按钮转圈后无反应",
- "evidence":"screenshot_01.png"}
-```
-
-### 步骤 2 — 生成报告 + 平台载荷
-
-```bash
-python scripts/gen_bug.py --bug bug.json --out bug_report.md --tracker tapd
-```
-
-产出：
-- `bug_report.md`：人读的标准缺陷单。
-- 控制台/同目录输出 `<tracker>` 字段映射 JSON（TAPD/禅道/Jira 可直接贴）。
-
-### 步骤 3 — 提交
-
-按 `references/tracker-guide.md` 把映射 JSON 投到对应平台 API / 手工录入。
-
-## 深化能力（V2）
-
-- 严重级判定：`scripts/rate_severity.py` 按「影响 × 可能性」矩阵（含 CWE / EPSS）
-  自动给出 S1–S4 与修复优先级建议。
-- 测试清单（复现步骤模板 / 附件采集 / 严重级矩阵）见 `references/checklist.md`。
-
-## 字段约定
-
-- **严重级 S1–S4**：S1 致命（核心不可用/数据丢失）、S2 严重、S3 一般、S4 轻微。
-- **优先级 P0–P3**：P0 立即修、P1 本迭代、P2 排期、P3  backlog。
-
-## 与上下游衔接
-
-- 输入：`qa-execution` 失败路由、`qa-api-runner` 报错、`qa-perf-analysis` 不达标、`qa-security-report` 高危。
-- 输出：缺陷单 → 研发修复 → `qa-bug-verify` 验证。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

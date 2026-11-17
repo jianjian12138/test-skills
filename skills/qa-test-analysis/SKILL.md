@@ -1,93 +1,27 @@
 ---
-
 name: qa-test-analysis
-description: |-
-  当已有结构化需求文档（由 qa-req-spec 产出），需要把它拆解成可测项、识别风险与
-  模糊点，并生成覆盖正向 / 负向 / 边界的测试点清单时使用。本技能在写用例之前，
-  会针对待澄清项主动发起澄清对话，避免默认猜测导致漏测。触发词："需求分析"、
-  "出测试点"、"分析一下这个需求怎么测"、"帮我拆解测试点"，或在 qa-req-spec 产出
-  之后立即使用。
-  英文触发词（English triggers）：test analysis, test point, requirement analysis.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 02-analysis
-  tier: 3
+title: 需求细化拆解与全维度风险识别
+version: 12.0.0
+tier: L1
+stage: requirements
+tags: ["analysis", "risk", "coverage", "equivalence"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-test-analysis — 需求分析与测试点
+# qa-test-analysis — 需求细化拆解与全维度风险识别
 
-直接从需求跳到用例，是漏测的主因。本技能先把需求**结构化拆解**为可测项、风险点、
-待澄清项，澄清后再生成覆盖正向 / 负向 / 边界的**测试点清单**，作为 `qa-test-case-gen`
-的输入。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`requirements`（架构层级：`L1`）
+- **核心职责**：基于等价类、边界值、状态机与因果图拆解全量测试点。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-## 三级推导模型（功能点 → 测试点 → 测试用例，W7 增强）
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-本技能位于「测试点」这一中间层，是提升用例采纳率的核心：
-
-- **L1 功能点**：`qa-req-spec` 产出的需求条目（"要做什么"）。
-- **L2 测试点**（本技能产出，`testpoints.md`）："验证什么"——把功能点拆成可验证单元，
-  去重、归并、标注类型（正/负/边界/专项）与优先级。这是介于需求与用例之间的**中间层**，
-  先想清「验证什么」再写步骤，可把用例采纳率从 60–70% 提升到 90%+（对标 AliExpress 实践）。
-- **L3 测试用例**：`qa-test-case-gen` 基于本技能产物格式化落盘（"怎么验"，步骤/预期/优先级/Excel/Xmind）。
-
-> 三层边界：L1 是需求语言，L2 是验证语言（可跨项目复用），L3 是实现语言。
-> 不要把 L2 直接写成 L3 步骤（易漏「为什么验这条」），也不要跳过 L2 从 L1 直跳 L3（易漏测）。
-
-## 何时使用
-
-- 已有 `requirement.md`（来自 `qa-req-spec`）或等价结构化需求。
-- 用户说「需求分析」「出测试点」「拆解测试点」「这个需求怎么测」。
-
-## 操作流程
-
-### 步骤 1 — 结构化拆解（产出 analysis.md）
-
-对 `requirement.md` 的每个功能点，按 `references/analysis-method.md` 拆解：
-
-- **可测项**：把功能点转成「可验证的陈述」（给定条件 → 操作 → 可观测结果）。
-- **风险点**：哪些地方易出错 / 历史易漏 / 逻辑复杂（标注高/中/低）。
-- **依赖与前置**：数据、环境、账号、第三方。
-- **待澄清项**：需求中仍模糊/矛盾/缺失的部分。
-
-### 步骤 2 — 对话澄清（关键）
-
-对待澄清项，**主动发起澄清对话**，不要默认猜测。参考 `references/clarify-patterns.md`
-生成具体、可答的问题（一次列 3–6 个，避免刷屏）。澄清结果写回 `clarifications.md`
-并回填 `requirement.md` 第 7 节。
-
-### 步骤 3 — 生成测试点（产出 testpoints.md）
-
-澄清后，对每个可测项按 `references/testpoint-patterns.md` 衍生测试点，至少覆盖：
-
-- **正向**：符合预期的正常路径。
-- **负向**：非法输入、越权、异常流程、错误提示。
-- **边界**：等价类边界、长度/数值极值、空值、并发边界。
-- **专项**（若需求涉及）：性能 / 安全 / 兼容视角切入。
-
-每个测试点用一行描述，标注：所属模块、类型（正/负/边界/专项）、关联风险、优先级（P0–P3）。
-
-### 步骤 4 — 落盘与衔接
-
-- `analysis.md`、`clarifications.md`、`testpoints.md` 写入变更工作区 `02-analysis/`。
-- 提示用户下一步调用 `qa-test-case-gen` 将测试点转为 Excel/Xmind 用例。
-
-## 质量要求
-
-- 测试点**可追溯**到具体可测项与需求章节。
-- 高风险的模块测试点密度应更高（高风险 → 更多负向/边界）。
-- 澄清未完成前，不得生成依赖该项的用例。
-
-## 与下游衔接
-
-`testpoints.md` 是 `qa-test-case-gen` 的直接输入；接口相关的测试点应同步触发
-`qa-api-doc` 准备接口文档。
-
-## 阶段产物契约（stages.json artifacts）
-
-本阶段主技能须产出的文件名（与 `qa-orchestrator/stages.json` 契约一致）：
-
-- analysis.md
-- testpoints.md
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

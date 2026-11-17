@@ -1,72 +1,27 @@
 ---
-
 name: qa-exploratory
-description: |-
-  探索性测试引导技能：把功能 / 风险点转化为一组结构化测试章程（charter），并给出 HTSM
-  启发式、常用 Tour、缺陷苗头信号与 note-taking 模板。用于需求模糊、时间紧、补充脚本化
-  测试盲区。触发词： "探索性测试", "exploratory", "章程", "charter", "随机测试",
-  or after qa-test-analysis.
-  英文触发词（English triggers）：exploratory testing, charter, session-based.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 06-execution
-  tier: 1
+title: 探索性测试章程（Charter）与启发式引导
+version: 12.0.0
+tier: L1
+stage: ui_mobile
+tags: ["exploratory", "sbTM", "charter", "heuristics"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-exploratory — 探索性测试引导
+# qa-exploratory — 探索性测试章程（Charter）与启发式引导
 
-探索性测试 = **边学、边设计、边执行、边记录**的同步过程。它不是「随机乱点」，而是
-有章程（charter）、有策略（heuristics/tour）、有停手条件（stop condition）的测试。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`ui_mobile`（架构层级：`L1`）
+- **核心职责**：基于 SFDPOT 与漫游测试模型生成高价值探索性测试章程。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> 脚本化测试保证「该测的都测了」；探索性测试负责「没想到要测的也被发现了」。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
-
-- 需求模糊 / 文档不全，无法一次性写出完整用例。
-- 时间紧，需要快速覆盖核心风险。
-- 补充脚本化测试的盲区（异常交互、边界组合、用户体验）。
-- 与 `qa-test-analysis` 衔接：分析出的风险点 → 直接喂给本技能生成章程。
-
-## 操作流程
-
-### 步骤 1 — 收集输入
-
-- 功能列表（模块 / 页面 / 接口）。
-- 风险点（来自 `qa-test-analysis` 的风险矩阵、或团队已知脆弱点）。
-
-### 步骤 2 — 生成章程
-
-```bash
-python scripts/gen_charters.py --input features.json --out charters.md
-# 或极简：
-python scripts/gen_charters.py --features "订单导出,优惠券核销" \
-    --risks "大数据量超时;权限越界" --timebox 90 --out charters.md
-```
-
-`features.json` 示例：
-```json
-{
-  "session_timebox_min": 90,
-  "features": [
-    {"name": "订单导出", "risks": ["大数据量超时", "权限越界"]},
-    {"name": "优惠券核销", "risks": []}
-  ]
-}
-```
-
-`charters.md` 含：每个功能一组章程，含 **目标 / 区域 / 方法(Tour) / 风险点 / 停止条件 / 时间盒**。
-
-### 步骤 3 — 执行与记录
-
-- 用 `references/heuristics.md` 的 Tour 与缺陷苗头信号边测边记。
-- 用 note-taking 模板（见 heuristics.md）沉淀发现。
-- 发现的 bug 转 `qa-bug-report`；需要回归的转 `qa-bug-verify`。
-
-## 与上下游衔接
-
-- 输入：`qa-test-analysis` 风险矩阵、需求/NFR。
-- 输出：章程 → 执行 → 缺陷（`qa-bug-report`）/ 用例补充（`qa-test-case-gen`）。
-- 兼容性：需多设备/浏览器覆盖时，结合 `qa-compat-matrix`。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

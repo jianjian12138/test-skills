@@ -1,46 +1,27 @@
 ---
-
 name: qa-chaos
-description: 混沌工程治理门禁技能：校验混沌实验规格是否「受治理」——业务关键实验必须定义稳态假设、终止条件、回退方案与爆炸半径；未受治理的关键实验产出阻断信号，避免在生产盲目注入故障。触发词："混沌工程", "chaos", "故障注入", "韧性", "resilience", "混沌实验", "稳态假设", or after qa-perf-analysis. 英文触发词（English triggers）：chaos engineering, fault injection, resilience.
-license: MIT
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: cross_cutting
-  tier: 2
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
+title: 分布式混沌工程故障注入与韧性逃生演练
+version: 12.0.0
+tier: L2
+stage: quality_gates_agent
+tags: ["chaos", "fault-injection", "latency", "circuit-breaker"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-chaos 混沌工程治理门禁
+# qa-chaos — 分布式混沌工程故障注入与韧性逃生演练
 
-在系统上线前，用**受控的故障注入**验证系统韧性（混沌工程）。本技能是一个**治理门禁**：它不实际对目标系统注入故障，而是校验你设计的混沌实验规格是否「受治理」——业务关键实验必须补齐四要素，否则视为高危、阻断发布。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`quality_gates_agent`（架构层级：`L2`）
+- **核心职责**：模拟网络延迟、下游超时、线程池耗尽与缓存雪崩验证系统降级韧性。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> ⚠️ **治理门禁 · 不执行外部工具**：本技能仅校验混沌实验**规格**是否受治理，不实际对目标系统注入任何故障；所有判定基于你提供的 YAML/JSON 规格，不做运行时探测。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
-- 你准备做故障演练 / 混沌实验（Pod 杀除、网络延迟、磁盘满、依赖超时等）。
-- 你写好了混沌实验 YAML/JSON，想先卡一道「是否安全可控」的门禁。
-- 在 `qa-perf-analysis` 之后，或作为发布前韧性保障的一环。
-
-## 规则（治理四要素）
-| 规则 | 含义 | 严重度 |
-|---|---|---|
-| C-STEADY | 实验须声明稳态假设（steady_state） | 缺则 high；业务关键缺则 critical |
-| C-ABORT | 实验须有终止条件（abort_conditions 非空） | 缺则 high；业务关键缺则 critical/blocking |
-| C-FALLBACK | 实验须有回退方案（fallback） | 缺则 high；业务关键缺则 critical/blocking |
-| C-BLAST | 实验须界定爆炸半径（blast_radius） | 缺则 high |
-
-业务关键（`business_critical: true`）实验缺上述任一要素 → 产出 `blocking=true` 信号，门禁失败。
-
-## 使用方式
-```bash
-python qa-chaos/scripts/chaos_gate.py --spec chaos.json --out signals
-```
-
-## 诚实边界（重要）
-- 本技能**只校验实验规格的治理完整性**，不实际对目标系统注入任何故障（无基础设施 / 网络依赖）。
-- 实际故障注入需配合 Chaos Mesh / Litmus / 云厂商故障演练平台在**受控环境**执行；本技能确保「先治理、再注入」。
-- 它不评估系统真实的韧性表现，只保证实验本身是安全可终止的。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L2` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

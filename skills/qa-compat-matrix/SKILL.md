@@ -1,81 +1,27 @@
 ---
-
 name: qa-compat-matrix
-description: |-
-  兼容性测试矩阵生成技能：根据 OS × 浏览器 × 设备 × 分辨率 × 网络 维度配置，生成带优先级
-  （必测/建议/可选）与「是否需云真机/云浏览器」标注的覆盖矩阵（CSV + Markdown）。覆盖
-  BrowserStack/SauceLabs/阿里云真机/腾讯 WeTest 接入与国产浏览器内核注意点。触发词：
-  "兼容性矩阵", "compatibility", "浏览器兼容", "设备矩阵", or after qa-test-analysis.
-  英文触发词（English triggers）：compatibility matrix, browser compatibility, cross-device.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 06-execution
-  tier: 1
+title: OS × 浏览器 × 设备跨端正交兼容性矩阵
+version: 12.0.0
+tier: L1
+stage: ui_mobile
+tags: ["compatibility", "pairwise", "browser", "device"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-compat-matrix — 兼容性测试矩阵
+# qa-compat-matrix — OS × 浏览器 × 设备跨端正交兼容性矩阵
 
-兼容性测试的本质是**在有限资源下最大化覆盖高风险组合**。本技能把维度配置变成一张
-**带优先级、带"是否需要云端设备"标注**的矩阵，避免盲目全排列。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`ui_mobile`（架构层级：`L1`）
+- **核心职责**：基于正交实验法（Pairwise）压缩跨端兼容性测试组合并生成云测矩阵。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> 不是所有组合都要测。先按流量/用户群定"必测"，其余"建议/可选"，移动端优先云真机。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 维度
-
-- **Web**：OS（Windows/macOS） × 浏览器（Chrome/Safari/Edge/Firefox + 国产内核）
-- **移动**：设备（iPhone/各安卓机型） × OS（iOS/Android 版本）
-- **其他**：分辨率（桌面/移动视口）、网络（WiFi/4G/弱网）
-
-## 操作流程
-
-### 步骤 1 — 准备维度配置
-
-```json
-{
-  "web": {"os": ["Windows 11", "macOS 14"], "browsers": ["Chrome", "Safari", "Edge", "微信内置"]},
-  "mobile": [
-    {"device": "iPhone 14", "os": "iOS 17"},
-    {"device": "Redmi Note 12", "os": "Android 13"}
-  ],
-  "must_pairs": ["Chrome|Windows 11", "Safari|iOS 17"],
-  "cloud_browsers": ["微信内置", "UC", "360"],
-  "resolutions": ["1920x1080", "375x812"]
-}
-```
-
-### 步骤 2 — 生成矩阵
-
-```bash
-python scripts/gen_matrix.py --config matrix.json --out matrix.md --csv matrix.csv
-```
-
-产物：
-- `matrix.md`：Web / Mobile 两张表，含优先级与"需云端"列。
-- `matrix.csv`：机器可读，便于排期/追踪。
-
-### 步骤 3 — 执行
-
-- 必测组合本地或云真机跑；国产浏览器（微信/UC/360）走云浏览器。
-- 云真机/云浏览器接入要点见 `references/matrix-guide.md`。
-
-## 优先级与云端标注规则
-
-- **必测(must)**：命中 `must_pairs` 或主流组合（Chrome+Win / Safari+iOS）。
-- **建议(should)**：其余主流浏览器/设备。
-- **可选(optional)**：长尾/小众。
-- **需云端**：移动设备、国产内核浏览器、`cloud_browsers` 列表中的项。
-
-## 定位金字塔（W5 增强）
-
-移动端 / 跨端定位策略遵循定位金字塔（稳定度降序）：
-**L1** accessibility-id（data-testid / data-qa）→ **L2** id/name/语义 css → **L3** 位置型 css（nth-child）→
-**L4** 脆弱 css（深层嵌套 / 动态 class）→ **L5** XPath（仅兜底，须注释原因）。
-配合 `qa-ui-automation/scripts/locator_health.py` 计算 `healthIndex`（L1=1.0…L5=0.0），
-低于 65 触发预警，推动开发补 `data-testid` / `data-qa` 钩子把定位上提到 L1。
-
-## 与上下游衔接
-
-- 输入：用户群/流量数据、`qa-test-analysis` 风险。
-- 输出：矩阵 → 执行（`qa-execution` 进度矩阵）/ 探索性（`qa-exploratory`）。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

@@ -1,0 +1,744 @@
+{
+  "version": "12.0.0",
+  "edition": "L6.0 Autonomous Quality Engineering Mesh",
+  "total_skills": 40,
+  "skills": [
+    {
+      "index": 1,
+      "id": "qa-req-spec",
+      "title": "非结构化 PRD 智能结构化与提取",
+      "stage": "requirements",
+      "tier": "L1",
+      "tags": [
+        "prd",
+        "requirement",
+        "ambiguity",
+        "spec"
+      ],
+      "l1_summary": "从非结构化 PRD/原型提取可测试规格、边界条件与模糊点追问清单",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-req-spec/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 2,
+      "id": "qa-test-analysis",
+      "title": "需求细化拆解与全维度风险识别",
+      "stage": "requirements",
+      "tier": "L1",
+      "tags": [
+        "analysis",
+        "risk",
+        "coverage",
+        "equivalence"
+      ],
+      "l1_summary": "基于等价类、边界值、状态机与因果图拆解全量测试点",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-test-analysis/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 3,
+      "id": "qa-test-case-gen",
+      "title": "标准测试用例集生成与多格式导出",
+      "stage": "tdm_cases",
+      "tier": "L1",
+      "tags": [
+        "testcase",
+        "excel",
+        "markdown",
+        "xmind"
+      ],
+      "l1_summary": "生成包含前置条件、步骤、预期结果与优先级的标准测试用例集",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-test-case-gen/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 4,
+      "id": "qa-test-data",
+      "title": "本土化合规测试数据工厂与状态机关联造数",
+      "stage": "tdm_cases",
+      "tier": "L2",
+      "tags": [
+        "tdm",
+        "id_card",
+        "phone",
+        "pii",
+        "masking",
+        "order_chain"
+      ],
+      "l1_summary": "生成符合 GB 11643-1999 身份证、手机号、多表关联订单链及主动 PII 脱敏",
+      "mcp_tool_binding": "generate_test_data",
+      "sop_path": "skills/qa-test-data/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 5,
+      "id": "qa-env-config",
+      "title": "多环境配置隔离与 Base URL 安全映射",
+      "stage": "tdm_cases",
+      "tier": "L1",
+      "tags": [
+        "env",
+        "config",
+        "ssrf",
+        "isolation"
+      ],
+      "l1_summary": "管理 dev/staging/prod 环境隔离并拦截指向内网元数据的 SSRF 风险",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-env-config/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 6,
+      "id": "qa-api-doc",
+      "title": "接口规范文档生成与静态合规校验",
+      "stage": "api_testing",
+      "tier": "L1",
+      "tags": [
+        "openapi",
+        "swagger",
+        "doc",
+        "rest"
+      ],
+      "l1_summary": "从代码或抓包生成标准 OpenAPI 3.1 规范文档并校验字段完整性",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-api-doc/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 7,
+      "id": "qa-api-contract",
+      "title": "OpenAPI 3.0/3.1 破坏性变更检测与 3D BOLA 契约模糊测试",
+      "stage": "api_testing",
+      "tier": "L2",
+      "tags": [
+        "contract",
+        "openapi",
+        "ref",
+        "bola",
+        "idor",
+        "fuzzing"
+      ],
+      "l1_summary": "递归解析 $ref 检测破坏性变更，并生成租户×角色×状态三维 BOLA 越权矩阵",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-api-contract/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 8,
+      "id": "qa-api-runner",
+      "title": "接口自动化测试真实执行与多维断言",
+      "stage": "api_testing",
+      "tier": "L2",
+      "tags": [
+        "api",
+        "runner",
+        "httpx",
+        "pytest",
+        "assertion"
+      ],
+      "l1_summary": "执行有状态 API 链路测试并校验响应状态码、JSON Schema 与耗时 SLA",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-api-runner/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 9,
+      "id": "qa-graphql-grpc",
+      "title": "GraphQL 与 gRPC 协议契约及深度嵌套查询测试",
+      "stage": "api_testing",
+      "tier": "L2",
+      "tags": [
+        "graphql",
+        "grpc",
+        "protobuf",
+        "depth"
+      ],
+      "l1_summary": "针对 GraphQL 循环查询炸弹与 gRPC 状态码映射进行专项契约验证",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-graphql-grpc/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 10,
+      "id": "qa-ui-automation",
+      "title": "Playwright UI 自动化与 ARIA 无障碍树快照自愈",
+      "stage": "ui_mobile",
+      "tier": "L2",
+      "tags": [
+        "playwright",
+        "aria",
+        "snapshot",
+        "self-healing",
+        "e2e"
+      ],
+      "l1_summary": "利用 200-400 Token 的 Playwright MCP ARIA 快照实现语义化定位器自愈",
+      "mcp_tool_binding": "heal_ui_locator_aria",
+      "sop_path": "skills/qa-ui-automation/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 11,
+      "id": "qa-ui-kb",
+      "title": "UI 页面对象知识库与来源签名防投毒",
+      "stage": "ui_mobile",
+      "tier": "L2",
+      "tags": [
+        "pom",
+        "page-object",
+        "kb",
+        "locator"
+      ],
+      "l1_summary": "维护带 SHA-256 签名溯源的页面无障碍树与语义定位器知识库",
+      "mcp_tool_binding": "heal_ui_locator_aria",
+      "sop_path": "skills/qa-ui-kb/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 12,
+      "id": "qa-ui-testid",
+      "title": "前端 AST 扫描与 data-testid / ARIA 属性自动注入",
+      "stage": "ui_mobile",
+      "tier": "L1",
+      "tags": [
+        "testid",
+        "aria-label",
+        "react",
+        "vue"
+      ],
+      "l1_summary": "扫描前端组件树自动补齐语义化 data-testid 与 role 属性",
+      "mcp_tool_binding": "heal_ui_locator_aria",
+      "sop_path": "skills/qa-ui-testid/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 13,
+      "id": "qa-mobile-autotest",
+      "title": "移动端 App 跨平台自动化测试流水线",
+      "stage": "ui_mobile",
+      "tier": "L2",
+      "tags": [
+        "mobile",
+        "appium",
+        "ios",
+        "android",
+        "monkey"
+      ],
+      "l1_summary": "覆盖 iOS/Android 控件树定位、弱网切换、前后台切换与稳定性压测",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-mobile-autotest/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 14,
+      "id": "qa-compat-matrix",
+      "title": "OS × 浏览器 × 设备跨端正交兼容性矩阵",
+      "stage": "ui_mobile",
+      "tier": "L1",
+      "tags": [
+        "compatibility",
+        "pairwise",
+        "browser",
+        "device"
+      ],
+      "l1_summary": "基于正交实验法（Pairwise）压缩跨端兼容性测试组合并生成云测矩阵",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-compat-matrix/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 15,
+      "id": "qa-exploratory",
+      "title": "探索性测试章程（Charter）与启发式引导",
+      "stage": "ui_mobile",
+      "tier": "L1",
+      "tags": [
+        "exploratory",
+        "sbTM",
+        "charter",
+        "heuristics"
+      ],
+      "l1_summary": "基于 SFDPOT 与漫游测试模型生成高价值探索性测试章程",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-exploratory/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 16,
+      "id": "qa-perf-design",
+      "title": "性能压测全生命周期方案与容量评估模型",
+      "stage": "performance",
+      "tier": "L2",
+      "tags": [
+        "performance",
+        "capacity",
+        "tps",
+        "sla",
+        "little-law"
+      ],
+      "l1_summary": "基于利特尔法则（Little's Law）与生产漏斗设计梯度压测与峰值脉冲方案",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-perf-design/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 17,
+      "id": "qa-perf-locust",
+      "title": "Locust 分布式协程压测脚本与实时退化熔断",
+      "stage": "performance",
+      "tier": "L2",
+      "tags": [
+        "locust",
+        "python",
+        "load-test",
+        "p99"
+      ],
+      "l1_summary": "生成带动态权重与自定义 P99 退化熔断钩子的 Locust 压测脚本",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-perf-locust/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 18,
+      "id": "qa-perf-jmeter",
+      "title": "JMeter 高并发压测计划与线程组编排",
+      "stage": "performance",
+      "tier": "L2",
+      "tags": [
+        "jmeter",
+        "jmx",
+        "throughput",
+        "stepping"
+      ],
+      "l1_summary": "生成标准化 JMX 压测配置、CSV 数据池分片与后端监听器配置",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-perf-jmeter/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 19,
+      "id": "qa-db-benchmark",
+      "title": "数据库慢查询剖析、索引验证与死锁压测",
+      "stage": "performance",
+      "tier": "L2",
+      "tags": [
+        "database",
+        "sql",
+        "explain",
+        "deadlock",
+        "index"
+      ],
+      "l1_summary": "分析 EXPLAIN 执行计划并构造高并发乐观锁/悲观锁冲突压测用例",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-db-benchmark/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 20,
+      "id": "qa-security-scan",
+      "title": "OWASP Top 10 安全核查、SAST/DAST 与敏感凭据扫描",
+      "stage": "security",
+      "tier": "L2",
+      "tags": [
+        "owasp",
+        "xss",
+        "sqli",
+        "ssrf",
+        "secrets"
+      ],
+      "l1_summary": "执行注入漏洞、越权访问与硬编码密钥泄漏静态/动态扫描",
+      "mcp_tool_binding": " sanitize_sensitive_data",
+      "sop_path": "skills/qa-security-scan/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 21,
+      "id": "qa-privacy-compliance",
+      "title": "个人信息保护法（PIPL）与 GDPR 数据合规审计",
+      "stage": "security",
+      "tier": "L1",
+      "tags": [
+        "pipl",
+        "gdpr",
+        "privacy",
+        "consent",
+        "masking"
+      ],
+      "l1_summary": "核查数据最小化采集、撤回同意链路、日志脱敏与跨境传输合规性",
+      "mcp_tool_binding": "sanitize_sensitive_data",
+      "sop_path": "skills/qa-privacy-compliance/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 22,
+      "id": "qa-report",
+      "title": "执行结果多维度聚合诊断与上线质量评估报告",
+      "stage": "release_ops",
+      "tier": "L1",
+      "tags": [
+        "report",
+        "metrics",
+        "dashboard",
+        "go-no-go"
+      ],
+      "l1_summary": "聚合功能、覆盖率、性能与安全信号生成结构化可追溯上线评估报告",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-report/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 23,
+      "id": "qa-bug-report",
+      "title": "高复现率结构化缺陷单生成与根因定位辅助",
+      "stage": "release_ops",
+      "tier": "L1",
+      "tags": [
+        "bug",
+        "defect",
+        "reproduce",
+        "har",
+        "trace"
+      ],
+      "l1_summary": "整合最小复现步骤、环境快照、trace_id 与期望/实际对比生成标准缺陷单",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-bug-report/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 24,
+      "id": "qa-bug-verify",
+      "title": "缺陷修复回归验证与防逃逸变体测试扩散",
+      "stage": "release_ops",
+      "tier": "L1",
+      "tags": [
+        "verify",
+        "regression",
+        "root-cause",
+        "variant"
+      ],
+      "l1_summary": "验证补丁有效性并围绕缺陷根因自动衍生同源变体回归用例",
+      "mcp_tool_binding": "run_tia_analysis",
+      "sop_path": "skills/qa-bug-verify/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 25,
+      "id": "qa-release-check",
+      "title": "生产发布多重上线红线门禁核查（Go/No-Go）",
+      "stage": "release_ops",
+      "tier": "L2",
+      "tags": [
+        "release",
+        "gate",
+        "rollback",
+        "canary"
+      ],
+      "l1_summary": "联动覆盖率、P0 缺陷清零、契约兼容性与回滚预案执行发布硬门禁",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-release-check/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 26,
+      "id": "qa-archive",
+      "title": "测试资产全量版本化归档与基线快照锁定",
+      "stage": "release_ops",
+      "tier": "L1",
+      "tags": [
+        "archive",
+        "baseline",
+        "audit",
+        "versioning"
+      ],
+      "l1_summary": "将用例集、覆盖率 SQLite 映射库、ARIA 快照与评测报告版本化封存",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-archive/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 27,
+      "id": "qa-risk-based",
+      "title": "基于代码复杂度与变更热度的风险驱动测试排序",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "risk",
+        "tia",
+        "churn",
+        "complexity",
+        "priority"
+      ],
+      "l1_summary": "结合 Git 变更频率、圈复杂度与业务权重动态计算用例执行优先级",
+      "mcp_tool_binding": "run_tia_analysis",
+      "sop_path": "skills/qa-risk-based/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 28,
+      "id": "qa-flaky-detect",
+      "title": "不稳定用例（Flaky Test）根因识别与隔离治理",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "flaky",
+        "quarantine",
+        "async-wait",
+        "race-condition"
+      ],
+      "l1_summary": "识别异步竞态、时间依赖与共享状态污染导致的 Flaky 用例并自动隔离",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-flaky-detect/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 29,
+      "id": "qa-mutation",
+      "title": "AST 算子变异测试与测试集有效性度量（MSI）",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "mutation",
+        "ast",
+        "msi",
+        "survived-mutant"
+      ],
+      "l1_summary": "对业务 AST 注入边界/逻辑取反算子变异，揪出“假阳性”无断言测试",
+      "mcp_tool_binding": "run_red_blue_swarm",
+      "sop_path": "skills/qa-mutation/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 30,
+      "id": "qa-a11y",
+      "title": "WCAG 2.2 无障碍合规审计与键盘焦点遍历测试",
+      "stage": "quality_gates_agent",
+      "tier": "L1",
+      "tags": [
+        "a11y",
+        "wcag",
+        "aria",
+        "contrast",
+        "screen-reader"
+      ],
+      "l1_summary": "基于 ARIA 树核查角色语义、标签完整性、对比度与焦点陷阱",
+      "mcp_tool_binding": "heal_ui_locator_aria",
+      "sop_path": "skills/qa-a11y/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 31,
+      "id": "qa-visual-regression",
+      "title": "多分辨率视觉回归对比与动态区域掩码防噪",
+      "stage": "quality_gates_agent",
+      "tier": "L1",
+      "tags": [
+        "visual",
+        "pixel-diff",
+        "layout-shift",
+        "cls"
+      ],
+      "l1_summary": "对比基准与候选页面渲染布局，自动屏蔽动态广告/时间戳噪声",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-visual-regression/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 32,
+      "id": "qa-unit-tdd",
+      "title": "高价值边界单元测试生成与属性测试（PBT）引导",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "unit",
+        "pytest",
+        "tdd",
+        "hypothesis",
+        "property-based"
+      ],
+      "l1_summary": "生成覆盖空值、极值、溢出与不变式属性的确定性单元测试",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-unit-tdd/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 33,
+      "id": "qa-chaos",
+      "title": "分布式混沌工程故障注入与韧性逃生演练",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "chaos",
+        "fault-injection",
+        "latency",
+        "circuit-breaker"
+      ],
+      "l1_summary": "模拟网络延迟、下游超时、线程池耗尽与缓存雪崩验证系统降级韧性",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-chaos/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 34,
+      "id": "qa-ci",
+      "title": "GitHub Actions / GitLab CI 质量门禁流水线编排",
+      "stage": "quality_gates_agent",
+      "tier": "L1",
+      "tags": [
+        "ci",
+        "github-actions",
+        "gitlab-ci",
+        "pipeline"
+      ],
+      "l1_summary": "编排集成 TIA 精准增量测试、契约门禁与 pass^k 评测的 CI 流水线",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-ci/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 35,
+      "id": "qa-synthetic-monitoring",
+      "title": "生产环境合成拨测（Synthetic Monitoring）与金丝雀巡检",
+      "stage": "quality_gates_agent",
+      "tier": "L1",
+      "tags": [
+        "synthetic",
+        "canary",
+        "probe",
+        "sla-monitor"
+      ],
+      "l1_summary": "构建零脏数据污染的生产核心链路定时拨测与告警规则",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-synthetic-monitoring/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 36,
+      "id": "qa-log-triage",
+      "title": "分布式链路日志智能聚类与异常堆栈根因定位",
+      "stage": "quality_gates_agent",
+      "tier": "L1",
+      "tags": [
+        "log",
+        "trace",
+        "triage",
+        "root-cause"
+      ],
+      "l1_summary": "基于 trace_id 聚合跨服务异常堆栈并定位首个故障扩散节点",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-log-triage/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 37,
+      "id": "qa-data-reconcile",
+      "title": "分布式账务与跨库数据一致性核对（Reconciliation）",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "reconcile",
+        "consistency",
+        "ledger",
+        "checksum"
+      ],
+      "l1_summary": "校验订单、支付流水与库存台账在并发状态下的最终一致性",
+      "mcp_tool_binding": "generate_test_data",
+      "sop_path": "skills/qa-data-reconcile/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 38,
+      "id": "qa-shadow-replay",
+      "title": "流量镜像基准快照沉淀与零代码 Diff 断言（Shadow QA）",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "shadow",
+        "har",
+        "replay",
+        "traffic-diff"
+      ],
+      "l1_summary": "清洗生产 HAR 流量中的动态噪声，对比新旧版本响应结构与数值偏移",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-shadow-replay/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 39,
+      "id": "qa-agent-eval",
+      "title": "被测 AI Agent 能力、τ-bench pass^k 一致性与轨迹可靠性评估",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "agent-eval",
+        "tau-bench",
+        "pass^k",
+        "pass@k",
+        "trajectory"
+      ],
+      "l1_summary": "通过 3D 黄金数据集与 pass^k (k=5) 幂次律度量 Agent 多轮执行一致性",
+      "mcp_tool_binding": "run_quality_gate",
+      "sop_path": "skills/qa-agent-eval/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    },
+    {
+      "index": 40,
+      "id": "qa-agent-security",
+      "title": "OWASP Agentic Top 10 (ASI:2026) 与 AST10 技能层红蓝对抗测试",
+      "stage": "quality_gates_agent",
+      "tier": "L2",
+      "tags": [
+        "agent-security",
+        "owasp-asi",
+        "ast10",
+        "prompt-injection",
+        "red-team"
+      ],
+      "l1_summary": "针对目标劫持(ASI01)、工具越权(ASI02)、记忆投毒(ASI06)与技能沙箱执行红蓝博弈",
+      "mcp_tool_binding": "run_red_blue_swarm",
+      "sop_path": "skills/qa-agent-security/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 380
+    }
+  ]
+}

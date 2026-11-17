@@ -1,71 +1,27 @@
 ---
-
 name: qa-ui-testid
-description: |-
-  当用户希望通过给前端代码批量补加稳定的 data-testid 属性来让 UI 自动化选择器更耐用，
-  或苦于页面每次重构脚本就大面积失效时使用。本技能扫描 React/Vue/HTML 源码，找出缺少
-  data-testid 的交互元素，按命名规则生成唯一标识，并以预览（dry-run）或写入（write）
-  方式输出清单 manifest。触发词："补 data-testid"、"扫描前端加测试属性"、
-  "选择器不稳定"、"UI 自动化定位痛点"，或在 qa-ui-automation 之前用于稳定选择器。
-  英文触发词（English triggers）：data-testid, selector stability, test attribute.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 06-execution
-  tier: 1
+title: 前端 AST 扫描与 data-testid / ARIA 属性自动注入
+version: 12.0.0
+tier: L1
+stage: ui_mobile
+tags: ["testid", "aria-label", "react", "vue"]
+mcp_tool_binding: heal_ui_locator_aria
 ---
-# qa-ui-testid — 前端扫描注入 data-testid
+# qa-ui-testid — 前端 AST 扫描与 data-testid / ARIA 属性自动注入
 
-UI 自动化脚本脆弱的根因是依赖 CSS/XPath。给交互元素统一加 `data-testid`，选择器与
-DOM 结构/样式解耦，前端怎么重构只要标识不变脚本就无需改。本技能用脚本批量补，省去
-人工逐行添加。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`ui_mobile`（架构层级：`L1`）
+- **核心职责**：扫描前端组件树自动补齐语义化 data-testid 与 role 属性。
+- **关联 MCP 原生工具**：`heal_ui_locator_aria`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-## 何时使用
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-- 启动 UI 自动化，希望脚本长期稳定。
-- 存量老项目页面量大，逐一手动加 testid 工作量大。
-- 用户说「补 data-testid」「扫描前端加测试属性」「选择器不稳定」。
-
-## 操作流程
-
-### 步骤 1 — 预览（默认，不改文件）
-
-```bash
-python scripts/scan_testid.py --project <前端源码目录> --dry-run --out <变更>/ui-kb/testid-manifest.md
-```
-
-脚本扫描 `.tsx/.jsx/.vue/.html` 等，找出「交互元素但缺 data-testid」的标签
-（button/a/input/select/textarea 或带 onClick 等事件处理器），按命名规则生成唯一 testid，
-输出清单 **不修改源码**。
-
-### 步骤 2 — 确认清单
-
-检查 `testid-manifest.md`：覆盖的界面/元素是否完整，命名是否符合团队规范
-（详见 `references/naming-rules.md`）。清单里有「待确认」项可先回答再写。
-
-### 步骤 3 — 写入代码
-
-```bash
-python scripts/scan_testid.py --project <前端源码目录> --write --out <变更>/ui-kb/testid-manifest.md
-```
-
-脚本直接改源码插入 `data-testid`。写入后建议提交代码让前端 review；
-也可把这步交给前端同学在他们仓库执行。
-
-### 步骤 4 — 衔接自动化
-
-补完 testid 后，元素即可被 Playwright `getByTestId()` 稳定捕获。配合 `qa-ui-kb`
-沉淀知识库、`qa-ui-automation` 生成页面对象与用例。
-
-## 命名规则（references/naming-rules.md）
-- 格式：`<语义来源>-<用途>`，语义取自 name/id/aria-label/placeholder/title，否则取标签名。
-- 同文件冲突自动追加 `-2/-3`。
-- 可选 `--prefix` 加模块前缀（如 `login-`）。
-
-## 注意
-- 默认 dry-run 安全；write 前务必 review 清单。
-- 正则扫描对极端写法（属性值含 `>`、动态拼接标签）可能漏判，属预期，人工复核即可。
-- 自闭合 `input type="hidden"` 等纯隐藏元素自动跳过。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `heal_ui_locator_aria` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

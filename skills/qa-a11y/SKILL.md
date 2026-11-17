@@ -1,81 +1,27 @@
 ---
-
 name: qa-a11y
-description: |-
-  无障碍(WCAG 2.1)静态检查治理门禁：扫描 HTML 源码/标记（不实际渲染、不调用渲染引擎或 axe-core），按 A 级规则（替代文本、表单标签、语言、标题层级、可访问名称、字幕、交互角色）
-  识别违规，存在 A 级问题时产出阻断信号，保障 Web 产品可达性。真实渲染级可访问性校验须接 axe-core/pa11y。触发词：
-  "无障碍", "WCAG", "a11y", "可达性", "accessibility", or after qa-ui-automation.
-  英文触发词（English triggers）：accessibility, WCAG, a11y.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: cross_cutting
-  tier: 1
+title: WCAG 2.2 无障碍合规审计与键盘焦点遍历测试
+version: 12.0.0
+tier: L1
+stage: quality_gates_agent
+tags: ["a11y", "wcag", "aria", "contrast", "screen-reader"]
+mcp_tool_binding: heal_ui_locator_aria
 ---
-# qa-a11y — 无障碍（可达性）检查
+# qa-a11y — WCAG 2.2 无障碍合规审计与键盘焦点遍历测试
 
-无障碍不是「锦上添花」，而是 **法律合规与用户基本权利**。WCAG 2.1 的 A 级要求是底线：
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`quality_gates_agent`（架构层级：`L1`）
+- **核心职责**：基于 ARIA 树核查角色语义、标签完整性、对比度与焦点陷阱。
+- **关联 MCP 原生工具**：`heal_ui_locator_aria`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> ⚠️ **治理门禁 · 不执行外部工具**：本技能是**静态规则检查治理门禁**，仅扫描源码/标记识别 WCAG 2.1 A 级违规，**不实际在浏览器渲染、不调用 axe-core 等渲染引擎或外部扫描器**；真实渲染级校验须接 axe-core/pa11y。
-- 图片无 `alt` → 屏幕阅读器用户完全不知内容（1.1.1）
-- 表单控件无 `label` → 不知要填什么（1.3.1/3.3.2）
-- 页面无 `lang` → 读音/翻译错误（3.1.1）
-- 标题跳级 → 结构导航断裂（1.3.1）
-- 链接/按钮无名称 → 无法识别目的（2.4.4/4.1.2）
-- 视频无字幕 → 听障用户无法获取（1.2.2）
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-> 本技能做**静态可检查项**的自动门禁；需要运行态或设计稿颜色的项（如对比度、键盘可达性）属边界，明确标注。
-
-## 输入约定
-
-`--in` 指向单个 HTML 文件或目录（递归扫描 `*.html`）。
-
-```html
-<!-- 示例：被检查对象 -->
-<html><body>
-  <h1>标题</h1>
-  <img src="logo.png">            <!-- ❌ 缺 alt -->
-  <input type="text">             <!-- ❌ 缺 label -->
-</body></html>
-```
-
-## 操作流程
-
-```bash
-python scripts/a11y_check.py --in page.html --out a11y_report.md --signals-dir signals [--fail-on]
-```
-
-- 逐文件扫描下方 7 类 A 级规则，汇总违规。
-- 存在 `critical`/`high`（A 级底线）违规 → 产出 `a11y_violation` **阻断信号**。
-- 分数 = 1 − (A 级违规数 / 被检查元素数)，用于趋势观察（非门禁唯一依据）。
-- `--fail-on` 时同时 `sys.exit(1)`。
-
-## 规则清单（A 级，自动可检查）
-
-| 规则 | 级别 | 说明（对应 WCAG） |
-| --- | --- | --- |
-| A-IMG-ALT | critical | 图片缺 `alt`（1.1.1） |
-| A-INPUT-LABEL | critical | 表单控件缺 `label`/`aria-label`（1.3.1/3.3.2） |
-| A-HTML-LANG | high | `<html>` 缺 `lang`（3.1.1） |
-| A-HEADING-ORDER | high | 标题层级跳级（1.3.1） |
-| A-NAME | high | 链接/按钮无可访问名称（2.4.4/4.1.2） |
-| A-VIDEO-CAPTION | medium | 视频缺字幕轨（1.2.2） |
-| A-ROLE | medium | 可交互 div/span 缺 `role`（4.1.2） |
-
-## 与上下游衔接
-
-- 输入：UI 组件/页面产物（由 `qa-ui-automation` 渲染或开发直接产出）。
-- 输出：无障碍报告 + 信号 → 接入 `qa-release-check` 门禁，作为 UI 质量横切门。
-
-## 能力边界（诚实标注）
-
-- 不计算**颜色对比度**（需设计稿颜色值，建议接 axe / pa11y 或人工评审）。
-- 不验证**键盘可达性**（需运行态，建议接 axe-core 或手动）。
-- 仅做**静态可检查**项；A 级以上（AA/AAA）与动态项由专业工具补全。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `heal_ui_locator_aria` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

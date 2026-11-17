@@ -1,76 +1,27 @@
 ---
-
 name: qa-visual-regression
-description: |-
-  视觉回归治理门禁：对比已落盘的基线快照与当前快照（DOM 结构 + 关键视觉属性，**不截图、不调浏览器**），识别布局/结构/样式回归，
-  存在布局级回归时产出阻断信号，守住「改一处崩一片」的 UI 底线。真实像素级对比须接 Percy/Chromatic。触发词：
-  "视觉回归", "visual regression", "UI 回归", "快照对比", "界面走样", or after qa-ui-automation.
-  英文触发词（English triggers）：visual regression, snapshot, UI diff.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: cross_cutting
-  tier: 1
+title: 多分辨率视觉回归对比与动态区域掩码防噪
+version: 12.0.0
+tier: L1
+stage: quality_gates_agent
+tags: ["visual", "pixel-diff", "layout-shift", "cls"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-visual-regression — 视觉回归（快照 diff）
+# qa-visual-regression — 多分辨率视觉回归对比与动态区域掩码防噪
 
-功能迭代最怕「**改 A 处、B 处莫名走样**」。视觉回归就是把「当前长相」和「已知正确的基线」对比，
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`quality_gates_agent`（架构层级：`L1`）
+- **核心职责**：对比基准与候选页面渲染布局，自动屏蔽动态广告/时间戳噪声。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> ⚠️ **治理门禁 · 不执行外部工具**：本技能仅对比已落盘快照做结构/布局断言，**不截图、不调浏览器、不接入 Percy/Chromatic 等外部像素 diff 服务**；真实像素级 diff 须接专业工具。
-任何结构性/布局级偏移都拦下来。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-> 像素级「长得像不像」是主观且容易误报的，本技能聚焦**可断言的客观差异**（结构、布局属性、关键样式），
-> 把噪声交给专业工具（见能力边界）。
-
-## 输入约定
-
-`--baseline` 与 `--current` 各指向一份快照 JSON，描述页面元素及其关键属性：
-
-```json
-{
-  "url": "https://app/home",
-  "elements": [
-    {"id": "header", "props": {"display": "flex", "width": "100%", "color": "#222", "text": "首页"}},
-    {"id": "logo",   "props": {"width": "120px", "height": "40px"}},
-    {"id": "footer", "props": {"display": "block", "text": "© 2026"}}
-  ]
-}
-```
-
-## 操作流程
-
-```bash
-python scripts/visual_diff.py --baseline base.json --current cur.json \
-       --out visual_report.md --signals-dir signals [--threshold 0] [--fail-on]
-```
-
-差异分级：
-
-| 规则 | 级别 | 说明 |
-| --- | --- | --- |
-| VR-MISSING | high | 基线元素在回归版本中缺失（结构破坏） |
-| VR-ADDED | high | 回归版本新增元素（可能挤压布局） |
-| VR-PROP（布局类） | high | `display/width/height/position/flex/...` 等布局属性变化 |
-| VR-PROP（文本/样式类） | medium | `text/color/font/border/...` 变化 |
-
-- 高危(high)回归数 > `--threshold`（默认 0，即零容忍）→ 产出 `visual_regression` **阻断信号**。
-- 趋势分 = 1 − (回归项 / 被检查元素数)。
-- `--fail-on` 时同时 `sys.exit(1)`。
-
-## 与上下游衔接
-
-- 输入：UI 自动化/渲染产物派生的快照（由 `qa-ui-automation` 或截图工具生成）。
-- 输出：视觉回归报告 + 信号 → 接入 `qa-release-check` 门禁，作为 UI 质量横切门。
-
-## 能力边界（诚实标注）
-
-- **不做像素级比对**（需图像库/截图 + pixelmatch/Playwright，超出零依赖范围）。
-- 快照需由上游产出；建议 CI 中接入 Playwright screenshot 生成 `elements` 快照后再交由本技能判定。
-- 文本类变化判为 medium（非布局阻断），避免文案微调误伤发布。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

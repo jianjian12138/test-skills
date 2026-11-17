@@ -1,67 +1,27 @@
 ---
-
 name: qa-mutation
-description: |-
-  变异测试分数治理门禁：本技能**不注入变异体、不运行测试**，仅基于变异工具(mutmut/cosmic-ray/pit)已产出的 mutants 清单计算变异分数（killed/(total-equivalent)），低于阈值时产出阻断信号，衡量测试套件「杀死缺陷」的真实能力。真实变异注入须接专业工具。触发词：
-  "变异测试", "mutation testing", "变异分数", "测试充分性", or after qa-test-case-gen/qa-api-runner.
-  英文触发词（English triggers）：mutation testing, mutation score, test adequacy.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: cross_cutting
-  tier: 1
+title: AST 算子变异测试与测试集有效性度量（MSI）
+version: 12.0.0
+tier: L2
+stage: quality_gates_agent
+tags: ["mutation", "ast", "msi", "survived-mutant"]
+mcp_tool_binding: run_red_blue_swarm
 ---
-# qa-mutation — 变异测试分数
+# qa-mutation — AST 算子变异测试与测试集有效性度量（MSI）
 
-覆盖率只回答「代码跑到了没」，变异分数回答「**跑到了之后，测试能不能抓出被故意改坏的版本**」。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`quality_gates_agent`（架构层级：`L2`）
+- **核心职责**：对业务 AST 注入边界/逻辑取反算子变异，揪出“假阳性”无断言测试。
+- **关联 MCP 原生工具**：`run_red_blue_swarm`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> ⚠️ **治理门禁 · 不执行外部工具**：本技能仅消费变异工具（mutmut/cosmic-ray/pit）**已有产出**、计算并门禁变异分数，**不注入变异体、不执行测试套件**；真实变异注入须接专业工具。
-变异工具（mutmut / cosmic-ray / pit 等）会注入微小改动（变异体 mutant），若测试套件未能让某个
-变异体失败（即「存活 survived」），说明该处行为没有被有效断言覆盖。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-> 变异分数是测试套件「杀伤力」的黄金指标。覆盖率 100% 但变异分数低，等于「走过场」。
-
-## 输入约定
-
-`--mutants` 指向一个 mutants 清单（JSON），每个变异体形如：
-
-```json
-[
-  {"id": "M1", "file": "calc.py", "line": 12, "operator": "RC", "status": "killed"},
-  {"id": "M2", "file": "calc.py", "line": 18, "operator": "AOR", "status": "survived"},
-  {"id": "M3", "file": "calc.py", "line": 20, "operator": "AOR", "status": "timeout"},
-  {"id": "M4", "file": "calc.py", "line": 25, "operator": "LCR", "status": "equivalent"}
-]
-```
-
-- `status` 取值：`killed`（被测试抓出）/ `survived`（存活，测试未察觉）/ `timeout`（超时，按已杀死计）/
-  `equivalent`（等价变异，不计入分母）。
-- 兼容旧式布尔字段：存在 `killed: true/false` 时，映射为 `killed` / `survived`。
-
-## 操作流程
-
-```bash
-python scripts/mutation_score.py --mutants mutants.json --out mutation_report.md \
-       --signals-dir signals --threshold 0.8 [--fail-on]
-```
-
-- 变异分数 = (killed + timeout) / (total − equivalent)。
-- 分数 ≥ `--threshold`（默认 0.8）→ 放行；低于 → 产出 `mutation_score_low` **阻断信号**。
-- `--fail-on` 时同时 `sys.exit(1)`，便于直接在 CI 步骤中断。
-
-## 与上下游衔接
-
-- 输入：变异工具产出（或由 `qa-api-runner` / `qa-ui-automation` 执行结果派生）。
-- 输出：变异报告 + 信号 → 接入 `qa-release-check` 门禁；作为测试充分性的横切质量门。
-
-## 能力边界（诚实标注）
-
-- 本技能**只做分数聚合与门禁判定**，不负责注入变异体（那由 mutmut/cosmic-ray 等专业工具完成）。
-- 等价变异（equivalent）依赖工具标注，未标注则计入分母；建议上游工具启用等价性分析以减少误判。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L2` 级别调用 `run_red_blue_swarm` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

@@ -1,118 +1,60 @@
-# 项目使用手册与快速指南 (Usage Manual)
+# Universal QA Skills (v12.0.0 — L6.0) 详细使用手册 (USAGE.md)
 
-本文档由自动化发布流程生成，提供当前项目的快速上手与使用指引。
+## 1. L1/L2 渐进式技能路由与按需加载
+避免一次性将 40 个技能全量塞入上下文，通过两阶段加载节省 **85%+** Prompt Tokens：
 
----
-
-## 一、目录排版结构
-
-```text
-├── ci-examples/
-│   ├── Jenkinsfile
-│   └── README.md
-├── evals/
-│   ├── grader.py
-│   └── run_evals.py
-├── install.ps1
-├── install.sh
-├── LICENSE
-├── make_dist.sh
-├── qaskills.py
-├── README.md
-├── reviews/
-│   └── acceptance-final/
-├── skills/
-│   ├── _diag_deadlink.py
-│   ├── build_registry.py
-│   ├── docs/
-│   ├── LICENSE
-│   ├── MAINTAINERS.md
-│   ├── qa-a11y/
-│   ├── qa-agent-eval/
-│   ├── qa-agent-security/
-│   ├── qa-api-contract/
-│   ├── qa-api-doc/
-│   ├── qa-api-runner/
-│   ├── qa-archive/
-│   ├── qa-bug-report/
-│   ├── qa-bug-verify/
-│   ├── qa-chaos/
-│   ├── qa-ci/
-│   ├── qa-code-review/
-│   ├── qa-compat-matrix/
-│   ├── qa-env-config/
-│   ├── qa-execution/
-│   ├── qa-exploratory/
-│   ├── qa-flaky-detect/
-│   ├── qa-mobile-autotest/
-│   ├── qa-mutation/
-│   ├── qa-orchestrator/
-│   ├── qa-perf-analysis/
-│   ├── qa-perf-design/
-│   ├── qa-perf-jmeter/
-│   ├── qa-perf-locust/
-│   ├── qa-release-check/
-│   ├── qa-report/
-│   ├── qa-req-spec/
-│   ├── qa-risk-based/
-│   ├── qa-security-report/
-│   ├── qa-security-scan/
-│   ├── qa-synthetic-monitoring/
-│   ├── qa-test-analysis/
-│   ├── qa-test-case-gen/
-│   ├── qa-test-data/
-│   ├── qa-test-strategy/
-│   ├── qa-ui-automation/
-│   ├── qa-ui-kb/
-│   ├── qa-ui-testid/
-│   ├── qa-unit-tdd/
-│   ├── qa-visual-regression/
-│   ├── README.md
-│   ├── references/
-│   ├── REGISTRY.json
-│   ├── templates/
-│   ├── tests/
-│   ├── tools/
-│   └── workflows/
-├── SKILLS_DELIVERY.md
-└── training/
-    ├── 01-认识测试技能套件.md
-    ├── 02-安装与环境准备.md
-    ├── 03-第一次跑通一条测试.md
-    ├── 04-需求与测试分析.md
-    ├── 05-用例与测试数据.md
-    ├── 06-接口测试全流程.md
-    ├── 07-执行阶段的多种测试类型.md
-    ├── 08-报告缺陷发布与归档.md
-    ├── 09-横切质量门禁与CI集成.md
-    └── 10-Agent测试专题与进阶最佳实践.md
-```
-
----
-
-## 二、环境要求与前置依赖
-
-- **Python** >= 3.10
-- **Node.js** >= 18 (如包含前端模块)
-- **Git** >= 2.30
-
----
-
-## 三、快速开始
-
-### 1. 安装与初始化
 ```bash
-pip install -r requirements.txt  # 或 npm install
+# 第一阶段 (L1 Router)：按意图检索 <= 4 个候选技能摘要及 Token 账本
+python3 qaskills.py route "Playwright ARIA 无障碍树选择器自愈"
+
+# 第二阶段 (L2 Loader)：按需加载目标技能的完整 SKILL.md SOP 规约
+python3 qaskills.py load qa-ui-automation
 ```
 
-### 2. 本地运行与验证
+## 2. 双模 MCP Server 挂载指南 (stdio + Streamable HTTP)
+
+### 方式 A：本地 IDE (`stdio` 零依赖管道)
+在 Cursor / Claude Code / Antigravity 的 `mcp_config.json` 中配置：
+
+```json
+{
+  "mcpServers": {
+    "universal-qa-skills-l6": {
+      "command": "python3",
+      "args": ["/path/to/test-skills/skills/tools/mcp_server.py", "--transport", "stdio"]
+    }
+  }
+}
+```
+
+### 方式 B：团队/CI 远程共享网关 (`Streamable HTTP` 传输)
+符合 MCP `2025-11-25` / `2026` 规范，单端点 `/mcp` 支持双向 JSON-RPC、批处理、`Mcp-Session-Id` 会话保持与 `X-Trace-Id` 链路追踪：
+
 ```bash
-pytest  # 或 npm run dev
+python3 qaskills.py serve-mcp --transport http --host 0.0.0.0 --port 8765
 ```
 
----
+## 3. 核心测试引擎 CLI 速查
 
-## 四、贡献与提交规范
+```bash
+# ① 生成中国大陆合规身份证/手机号/跨表关联订单状态机数据 (Users -> Orders -> Payments -> Inventory)
+python3 qaskills.py data --type order_chain --count 3
 
-- 提交前请执行代码清理与门禁检查；
-- 遵循 Conventional Commits 规范（feat/fix/docs/chore/refactor）。
+# ② 主动清洗文本中的大陆身份证、手机号与 API 密钥
+python3 qaskills.py sanitize "测试客户身份证 11010119900307251X，手机 13812345678，密钥 sk-1234567890abcdef"
+
+# ③ 动静融合 TIA 精准测试分析 (Git Diff + Python AST + .coverage SQLite 动态行级上下文)
+python3 qaskills.py tia --diff HEAD~1
+
+# ④ 基于 Playwright MCP ARIA 快照 (200-400 Tokens) 的 UI 定位器自愈
+python3 qaskills.py aria-heal --selector "#legacy-pay-btn" --intent "立即提交并支付"
+
+# ⑤ 生成 3D BOLA/IDOR 有状态接口越权测试矩阵 (4 角色 × 3 动作 × 3 状态 = 36 向量)
+python3 qaskills.py bola-fuzz --endpoint "/api/v1/orders/{order_id}"
+
+# ⑥ 运行 OWASP Agentic Top 10 (ASI:2026) & AST10 红蓝对抗自主进化飞轮
+python3 qaskills.py swarm --rounds 6
+
+# ⑦ 运行 3D 黄金数据集与 τ-bench pass^k (k=5) 自动化评测门禁
+python3 qaskills.py eval
+```

@@ -1,85 +1,27 @@
 ---
-
 name: qa-perf-jmeter
-description: |-
-  性能测试 JMeter 技能（与 qa-perf-locust 平级、共用 qa-perf-design 场景 schema）。把
-  场景 JSON 生成标准 JMeter .jmx，并解析 JMeter 结果 CSV 给出与 qa-perf-analysis 同口径
-  的吞吐 / 延迟分位 / 错误率 / 瓶颈诊断 / SLA 判定。适合无代码 / 分布式压测 / 已有 JMeter
-  资产的团队。触发词： "JMeter 压测", "生成 jmx", "JMeter 结果分析", or after
-  qa-perf-design.
-  英文触发词（English triggers）：JMeter, jmx, performance testing.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 06-execution
-  tier: 1
+title: JMeter 高并发压测计划与线程组编排
+version: 12.0.0
+tier: L2
+stage: performance
+tags: ["jmeter", "jmx", "throughput", "stepping"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-perf-jmeter — JMeter 性能测试（兼容 Locust 之外的另一条路线）
+# qa-perf-jmeter — JMeter 高并发压测计划与线程组编排
 
-与 `qa-perf-locust` 平级：**两者共用 `qa-perf-design` 的场景 JSON schema**，可互换。
-选 JMeter 还是 Locust，见下方「选型建议」。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`performance`（架构层级：`L2`）
+- **核心职责**：生成标准化 JMX 压测配置、CSV 数据池分片与后端监听器配置。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> 已有 Locust 路线（qa-perf-locust / qa-perf-analysis）专注代码化与 CI；
-> 本技能提供 JMeter 路线，覆盖无代码、分布式、已沉淀 JMeter 脚本的团队。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 选型建议
-
-| 维度 | JMeter | Locust |
-| --- | --- | --- |
-| 上手 | 无代码 GUI，上手快 | 需写 Python |
-| 分布式 | 原生 master-slave，成熟 | 需 master/worker 编排 |
-| 协议 | 多（HTTP / JDBC / JMS / FTP…） | 以 HTTP 为主 |
-| CI 集成 | `-n -t x.jmx -l result.csv` | `locust -f x.py --headless` |
-| 脚本版本化 | XML，diff 友好度一般 | Python，diff 友好 |
-
-**结论**：无代码/分布式/已有 JMeter 资产 → 用本技能；代码化/深度 CI 编排 → 用 qa-perf-locust。
-
-## 操作流程
-
-### 步骤 1 — 生成 .jmx
-
-```bash
-python scripts/gen_jmx.py --scenarios scenario.json --out plan.jmx
-# 可选：--data-csv data.csv  （CSV 数据驱动）
-#       --threads-cap 1000   （单节点线程上限，超出在注释里提示走分布式）
-```
-
-产物 `plan.jmx`：每个 scenario 一个 ThreadGroup；按 weight 用 Throughput Controller
-分配接口权重；含 Header Manager、Constant Timer（think_time）、Aggregate/Summary 监听器。
-
-### 步骤 2 — 运行（无 GUI 模式）
-
-```bash
-jmeter -n -t plan.jmx -l result.csv -e -o report_html
-# -l result.csv  产出 CSV（analyze_jmeter.py 解析源）
-# -e -o report_html  生成 HTML 报告（人工查看）
-# 分布式： jmeter -n -t plan.jmx -r -l result.csv   （需 remote_hosts 配置）
-```
-
-详见 `references/jmeter-guide.md`。
-
-### 步骤 3 — 分析结果
-
-```bash
-python scripts/analyze_jmeter.py --csv result.csv --sla sla.json --out analysis.md
-```
-
-`analysis.md` 与 `qa-perf-analysis` 同口径：总览 / 逐接口 / 瓶颈诊断 / SLA 判定。
-
-### 瓶颈启发式（同 qa-perf-analysis）
-
-| 信号 | 可能瓶颈 |
-| --- | --- |
-| 错误率随并发上升 | 过载 / 限流 / 连接池耗尽 |
-| 延迟高但吞吐上不去 | 单请求重（慢 SQL / 外部调用） |
-| 用户涨、吞吐 plateau | 系统饱和点 |
-| P99 远高于 P95 | 长尾（GC / 锁 / 慢依赖） |
-
-## 与上下游衔接
-
-- 输入：`qa-perf-design` 场景 JSON（同 schema）。
-- 输出：结论进 `qa-report` / 上线评审；不达标转 `qa-bug-report`。
-- 对比：`qa-perf-analysis` 专用于 Locust；本技能专用于 JMeter，口径一致便于横向比较。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L2` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

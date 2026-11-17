@@ -1,87 +1,27 @@
 ---
-
 name: qa-perf-locust
-description: |-
-  当已有性能测试方案（来自 qa-perf-design），需要生成可直接运行的 Locust 压测脚本时
-  使用。本技能根据场景 JSON 渲染出 Locust 的 .py 脚本，包含 User/TaskSet 任务类、
-  思考时间 think-time、任务权重 weight、爬坡 ramp-up 参数，并给出运行命令。
-  触发词："生成压测脚本"、"Locust脚本"、"性能脚本"，或在 qa-perf-design 之后使用。
-  英文触发词（English triggers）：Locust, load testing, performance script.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 06-execution
-  tier: 1
+title: Locust 分布式协程压测脚本与实时退化熔断
+version: 12.0.0
+tier: L2
+stage: performance
+tags: ["locust", "python", "load-test", "p99"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-perf-locust — Locust 压测脚本生成
+# qa-perf-locust — Locust 分布式协程压测脚本与实时退化熔断
 
-把 `qa-perf-design` 的场景 JSON 渲染成**可直接运行**的 Locust 脚本：
-自动生成 `User` / `TaskSet`、`@task`、权重、思考时间、爬坡参数，
-并把每个接口的请求方法、路径、断言写进任务。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`performance`（架构层级：`L2`）
+- **核心职责**：生成带动态权重与自定义 P99 退化熔断钩子的 Locust 压测脚本。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> 选型说明：性能压测用 Locust 而非 JMeter —— 纯 Python、可版本化、易与 CI 集成，
-> 适合测试工程师写代码而非拖拽组件。复杂分布式再上分布式 master/worker。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
-
-- 已有 `qa-perf-design` 方案（场景 JSON）。
-- 用户说「生成压测脚本」「Locust 脚本」「性能脚本」。
-- 需要在 CI / 容器里跑压测。
-
-## 操作流程
-
-### 步骤 1 — 准备接口清单
-
-在场景 JSON 里给每个 scenario 挂 `endpoints`（也可以全局共享）：
-
-```json
-{
-  "base_url": "https://api.example.com",
-  "endpoints": {
-    "create_order": {"method": "POST", "path": "/order", "weight": 5,
-                     "json": {"sku": "A1", "qty": 1}},
-    "query_order": {"method": "GET", "path": "/order/{id}", "weight": 3}
-  },
-  "scenarios": [
-    {"name": "load_peak", "type": "load", "users": 500, "spawn_rate": 50,
-     "duration": 600, "think_time": 1.0, "endpoints": ["create_order", "query_order"]}
-  ]
-}
-```
-
-### 步骤 2 — 生成脚本
-
-```bash
-python scripts/gen_locust.py --scenarios scenarios.json --out locustfile.py
-```
-
-生成的 `locustfile.py` 包含：
-- 全局 `BASE_URL` / 默认请求头。
-- 每个 scenario 一个 `User` 类（类名 `LoadPeakUser` 等），`@task` 按 `weight` 分布。
-- 思考时间用 `between(think_time*0.5, think_time*1.5)`。
-- 每个请求带 `name=` 便于统计，catch 异常并 `self.environment.runner` 上报。
-
-### 步骤 3 — 运行
-
-```bash
-# 命令行（无 UI）
-locust -f locustfile.py --headless -u 500 -r 50 -t 600s \
-    --csv=results --html=report.html
-
-# 或带 Web UI
-locust -f locustfile.py
-```
-
-## 进阶
-
-- 关联参数（如登录 token）：在 `on_start` 里拿 token 存 `self.token`。
-- 数据驱动：把 `json`/`params` 换成从 `csv` 循环读取（`references/locust-guide.md`）。
-- 断言：用 `response.status_code` + `response.elapsed` 自行记录失败。
-
-## 与上下游衔接
-
-- 输入：`qa-perf-design` 的场景 JSON。
-- 输出：运行产物 `results_stats.csv` / `results_history.csv` 交给 `qa-perf-analysis`。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L2` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

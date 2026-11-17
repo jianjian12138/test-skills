@@ -1,93 +1,27 @@
 ---
-
 name: qa-req-spec
-description: |-
-  当用户手上是零散、非结构化的原始需求材料（PRD 片段、用户故事、会议记录、
-  蓝湖/Figma 原型标注文字、或以文字描述的截图），需要转成规范、可直接用于测试的
-  需求文档时使用。本技能产出结构统一的 Markdown 需求文档，包含模块划分、交互规则、
-  输入与权限约束、异常边界及待确认问题，供下游 qa-* 技能消费。触发词："整理需求"、
-  "把原型转成需求文档"、"需求结构化"、"这份需求帮我规范一下"，或当需求刚粘贴进来、
-  尚不足以直接做测试分析时使用。
-  英文触发词（English triggers）：requirement spec, PRD, requirement structuring.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 01-requirement
-  tier: 1
+title: 非结构化 PRD 智能结构化与提取
+version: 12.0.0
+tier: L1
+stage: requirements
+tags: ["prd", "requirement", "ambiguity", "spec"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-req-spec — 需求结构化
+# qa-req-spec — 非结构化 PRD 智能结构化与提取
 
-需求散、缺、乱是测试漏测的根源。本技能把**任意原始需求材料**转化为一份结构统一、
-可直接喂给 `qa-test-analysis` 的标准需求文档（`requirement.md`）。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`requirements`（架构层级：`L1`）
+- **核心职责**：从非结构化 PRD/原型提取可测试规格、边界条件与模糊点追问清单。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-## 何时使用
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-- 用户贴来 PRD 片段、用户故事、会议记录、原型标注文字。
-- 用户说「把原型/蓝湖内容转成需求文档」「需求帮我规范一下」。
-- 拿到的是截图描述而非结构化文档。
-
-## 输入
-
-- 原始需求文本 / 用户故事 / 原型标注（可引用文件或粘贴）。
-- 可选：产品原型链接（蓝湖/Figma 等，若已配 MCP 则先拉取内容）。
-
-## 操作流程
-
-### 步骤 1 — 抽取与归类（对照抽取检查单）
-
-读取 `references/extraction-checklist.md`，逐项从原始材料中抽取：
-
-- 业务背景与目标
-- 涉及模块 / 页面
-- 每个模块的功能点与交互规则
-- 输入约束（格式、长度、必填、枚举）
-- 权限 / 角色约束
-- 异常与边界处理
-- 非功能需求（性能/安全/兼容，若有提及）
-
-### 步骤 2 — 套用标准模板
-
-按 `references/requirement-template.md` 输出 `requirement.md`，固定章节顺序：
-
-1. 背景与目标
-2. 测试范围（范围内 / 范围外）
-3. 功能模块划分
-4. 各模块交互规则与操作细则
-5. 特殊约束（输入格式、权限、异常提示）
-6. 非功能需求（NFR）
-7. 待澄清项（无法从材料确定的，先列出，交 `qa-test-analysis` 对话澄清）
-
-### 步骤 3 — 标注不确定项
-
-凡材料缺失、矛盾、模糊之处，**不要臆测**，统一放进「待澄清项」并标注影响（会阻塞哪些测试设计）。
-这些项将在 `qa-test-analysis` 阶段由用户补充。
-
-### 步骤 4 — 落盘
-
-将 `requirement.md` 写入变更工作区的 `01-requirement/` 目录（由 `qa-orchestrator` 建立）。
-
-## 深化能力（V2）
-
-- 需求可追溯矩阵：`scripts/gen_trace_matrix.py` 由需求列表生成
-  「需求 → 测试点 → 用例 → 结果」追溯骨架，保证每条需求都被测到。
-- NFR 提取模板、验收标准（AC）模板、可追溯矩阵与测试清单见 `references/checklist.md`。
-
-## 质量要求
-
-- **可追溯**：每个功能点都能回溯到原始材料出处（引用原文片段）。
-- **可测**：描述用「系统应…」「当用户…则…」的确定性语言，避免「支持」「优化」等模糊词。
-- **不臆测**：不确定的写进待澄清项，而非编进需求。
-
-## 与下游衔接
-
-输出后建议立即调用 `qa-test-analysis`，并携带本 `requirement.md` 作为分析输入。
-
-## 阶段产物契约（stages.json artifacts）
-
-本阶段主技能须产出的文件名（与 `qa-orchestrator/stages.json` 契约一致）：
-
-- requirement.md
-- reqs.json
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

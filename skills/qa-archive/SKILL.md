@@ -1,66 +1,27 @@
 ---
-
 name: qa-archive
-description: |-
-  在一次变更 / 测试周期结束时使用，把全部产物（需求、用例、执行结果、报告、缺陷）
-  打包成一个带时间戳与清单 manifest 的归档，使整个测试生命周期可追溯、可复盘、
-  可还原交付审计。触发词："归档"、"一键归档"、"测试归档"、"关闭变更"，或在
-  qa-release-check 通过之后使用。
-  英文触发词（English triggers）：test archive, change closure, test artifacts.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 08-archive
-  tier: 1
+title: 测试资产全量版本化归档与基线快照锁定
+version: 12.0.0
+tier: L1
+stage: release_ops
+tags: ["archive", "baseline", "audit", "versioning"]
+mcp_tool_binding: route_qa_skills
 ---
-# qa-archive — 一键归档
+# qa-archive — 测试资产全量版本化归档与基线快照锁定
 
-一个变更走完「需求→设计→测试→缺陷→上线」后，把整套产物**打包成一个带清单的归档**，
-保证全流程可追溯、可复盘、可交付审计。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`release_ops`（架构层级：`L1`）
+- **核心职责**：将用例集、覆盖率 SQLite 映射库、ARIA 快照与评测报告版本化封存。
+- **关联 MCP 原生工具**：`route_qa_skills`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> 测试的价值一半在结论，一半在可追溯。归档让每次发布都有完整证据链。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
-
-- 变更关闭 / 上线完成 / 版本发布。
-- 用户说「归档」「一键归档」「测试归档」「关闭变更」。
-
-## 操作流程
-
-### 步骤 1 — 指定变更目录
-
-变更目录由 `qa-orchestrator` 的 `init_change.py` 创建，含 01-requirement … 08-archive。
-
-### 步骤 2 — 归档
-
-```bash
-python scripts/archive_change.py --change changes/登录模块v2 --out ./archives
-```
-
-产出 `./archives/登录模块v2_20260805_215200.zip`（含全部产物，排除缓存）+
-`登录模块v2_..._manifest.md`（目录树 + 文件数 + 大小 + 关键结论摘要占位）。
-
-### 步骤 3 — 交付 / 审计
-
-归档文件可作版本发布附件、等保/审计证据、团队知识库沉淀。
-
-## 与上下游衔接
-
-- 输入：`qa-orchestrator` 变更目录（上游所有产物）。
-- 上游触发：`qa-release-check` 通过后归档。
-- 事后：`qa-report` 结论已落进归档，便于回溯质量趋势。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
-
-## 阶段产物契约（stages.json artifacts）
-
-本阶段主技能须产出的文件名（与 `qa-orchestrator/stages.json` 契约一致）：
-
-- archive.zip
-- ci.yaml
-- test-strategy.md
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `route_qa_skills` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

@@ -1,74 +1,27 @@
 ---
-
 name: qa-ci
-description: |-
-  用于生成 CI/CD 流水线配置，让每次 push/PR 都自动运行 QA 测试套件
-  （lint + 单元测试 + 接口/UI/安全扫描）。本技能从一份配置 JSON 生成可直接提交的
-  GitHub Actions、GitLab CI、Jenkinsfile 配置，默认串起 lint → 单元 → 接口/UI →
-  安全扫描的质量门禁。触发词："CI配置"、"流水线"、"GitHub Actions"、"GitLab CI"、
-  "Jenkins"、"把测试接进CI"。
-  英文触发词（English triggers）：CI/CD, pipeline, GitHub Actions, Jenkins.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: cross_cutting
-  tier: 1
+title: GitHub Actions / GitLab CI 质量门禁流水线编排
+version: 12.0.0
+tier: L1
+stage: quality_gates_agent
+tags: ["ci", "github-actions", "gitlab-ci", "pipeline"]
+mcp_tool_binding: run_quality_gate
 ---
-# qa-ci — CI/CD 流水线配置生成
+# qa-ci — GitHub Actions / GitLab CI 质量门禁流水线编排
 
-把「测试接进流水线」这一步做成确定性生成：一份配置 JSON →
-GitHub Actions / GitLab CI / Jenkinsfile 三选一或全要。
-默认串起 **lint → 单元 → 接口/UI → 安全扫描**，让你每次提交都跑质量门禁。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`quality_gates_agent`（架构层级：`L1`）
+- **核心职责**：编排集成 TIA 精准增量测试、契约门禁与 pass^k 评测的 CI 流水线。
+- **关联 MCP 原生工具**：`run_quality_gate`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-> 测试不进 CI，等于没测。先有流水线，质量才有持续保障。
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-## 何时使用
-
-- 要把测试套件接入持续集成。
-- 用户说「CI 配置」「流水线」「GitHub Actions」「GitLab CI」「Jenkins」「把测试接进 CI」。
-
-## 操作流程
-
-### 步骤 1 — 填配置
-
-```json
-{"project":"order-svc","python_version":"3.13","providers":["github","gitlab"],
- "test_cmd":"pytest -q","lint_cmd":"flake8 .","security_cmd":"semgrep --config auto",
- "services":["postgres"],"branches":["main"]}
-```
-
-### 步骤 2 — 生成
-
-```bash
-python scripts/gen_ci.py --config ci.json --outdir ./ci_out
-```
-
-在 `ci_out/` 生成对应文件（` .github/workflows/qa.yml` / `.gitlab-ci.yml` / `Jenkinsfile`），
-含 install → lint → test → security 阶段，缺省失败即阻断合并。
-
-### 步骤 3 — 接入
-
-- GitHub：提交 `.github/workflows/qa.yml`，PR 自动跑。
-- GitLab：提交 `.gitlab-ci.yml`，需共享 Runner。
-- Jenkins：用 Pipeline 导入 `Jenkinsfile`。
-
-## 阶段约定
-
-| 阶段 | 做什么 | 失败影响 |
-| --- | --- | --- |
-| install | 装依赖 | 阻断 |
-| lint | 代码规范 / 静态检查 | 阻断 |
-| test | 单元 + 接口/UI | 阻断 |
-| security | Semgrep / Trivy | 阻断（可设警告阈值） |
-
-## 与上下游衔接
-
-- 输入：各专项技能的可执行命令（`qa-api-runner` pytest、`qa-security-scan` semgrep/trivy）。
-- 输出：流水线文件 → 仓库提交；失败转 `qa-bug-report`。
-
-## 参考资料
-
-- 检查项、阈值、CLI 用法与常见坑：见 [`references/guide.md`](references/guide.md)。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L1` 级别调用 `run_quality_gate` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。

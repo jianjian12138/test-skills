@@ -1,59 +1,27 @@
 ---
-
 name: qa-test-data
-description: |-
-  当用户需要为执行或自动化准备测试数据时使用——边界值 / 等价类取值、异常输入、
-  批量造数，或对敏感字段做 PII 脱敏。本技能按字段规格生成 CSV/JSON 数据，并对标注
-  字段自动打码，避免真实个人信息进入测试库。触发词："造测试数据"、"生成边界值"、
-  "测试数据脱敏"、"批量造数"，或当用例在执行前需要填充输入数据时使用。
-  英文触发词（English triggers）：test data, data generation, PII masking.
-license: MIT
-compatibility: "Claude / Cursor / Codex / 任意兼容 Agent Skills 标准的通用 Agent（零依赖标准库）"
-
-metadata:
-  version: "1.0.0"
-  category: traditional
-  stage: 04-testdata
-  tier: 1
+title: 本土化合规测试数据工厂与状态机关联造数
+version: 12.0.0
+tier: L2
+stage: tdm_cases
+tags: ["tdm", "id_card", "phone", "pii", "masking", "order_chain"]
+mcp_tool_binding: generate_test_data
 ---
-# qa-test-data — 测试数据生成
+# qa-test-data — 本土化合规测试数据工厂与状态机关联造数
 
-手工造数慢、边界易漏、还容易把真实个人信息带进测试库。本技能按字段规格生成
-**边界/等价/随机**数据，并对标注字段**脱敏**，输出 CSV/JSON 直接用于执行或自动化。
+## 1. 技能定位与适用场景 (When to Use)
+- **所属生命周期阶段**：`tdm_cases`（架构层级：`L2`）
+- **核心职责**：生成符合 GB 11643-1999 身份证、手机号、多表关联订单链及主动 PII 脱敏。
+- **关联 MCP 原生工具**：`generate_test_data`（通过 `skills/tools/mcp_server.py` 暴露）。
 
-## 何时使用
+## 2. 四维边界契约 (4-Panel Boundary Blueprint)
+- **输入契约 (Input Contract)**：接收结构化业务上下文、代码变更片段或接口 Schema；若关键上下文缺失，必须先输出澄清问题清单，禁止静默猜测默认 ID 或生产地址。
+- **工具与权限边界 (Tools & Permissions)**：默认在只读沙箱与脱敏数据集上运行；涉及写操作或外部请求时强制经过白名单校验（符合 OWASP AST10 v1.0-2026 技能安全规范）。
+- **输出规约 (Output Schema)**：输出结构化 JSON 载荷或带明确优先级（P0–P3）、前置条件、执行步骤与可验证断言的 Markdown 报告。
+- **护栏与门禁 (Guardrails & Limits)**：单次最大循环步数 `max_steps = 5`，严禁将未脱敏 PII 数据写入日志，评测门禁要求 `pass^5 >= 80.0%`。
 
-- 用例需要输入数据（尤其边界、异常值）。
-- 用户说「造测试数据」「生成边界值」「测试数据脱敏」「批量造数」。
-- 接口/UI 自动化前置需要一批账号/订单等基础数据。
-
-## 操作流程
-
-### 步骤 1 — 编写数据规格
-
-按 `references/data-spec.md`，描述字段类型与边界，标注需脱敏字段。
-参考 `references/example-spec.json`。
-
-### 步骤 2 — 生成
-
-```bash
-python scripts/gen_data.py --input spec.json --outdir <变更>/04-testdata --format csv
-```
-- 整型字段：自动产出 `min / max / min-1 / max+1 / 0` 边界。
-- 字符串字段：空 / 最小长 / 最大长 / 超长。
-- phone/email/enum：按规格随机若干条（`seed` 可复现）。
-- `pii_mask` 中的字段：自动脱敏（首尾保留、中间打码）。
-
-### 步骤 3 — 使用与落盘
-
-产物 `testdata.csv` / `testdata.json` 落入 `04-testdata/`，供 `qa-api-runner`、
-`qa-ui-automation` 或手工执行消费。
-
-## 注意
-- 脱敏仅防明文泄露，测试库仍应遵循最小权限；敏感系统勿用生产数据。
-- 随机数据用 `seed` 固定，保证回归可复现。
-- 枚举/业务约束（如手机号格式）建议用 `type:"enum"` 或具体生成器，避免无效数据。
-
-## 与上下游衔接
-- 上游：`qa-test-analysis` 测试点里的边界/异常维度 → 转成本技能规格。
-- 下游：数据喂给 `qa-api-runner`（接口）、`qa-ui-automation`（UI）、`qa-perf-*`（性能铺底数据）。
+## 3. 标准化执行流水线 (Standard Operating Procedure)
+1. **上下文校验与脱敏预检**：调用 `sanitize_sensitive_data` 过滤输入中的手机号、身份证号与密钥。
+2. **核心分析与引擎调度**：根据 `L2` 级别调用 `generate_test_data` 执行确定性分析或生成测试资产。
+3. **自愈与防逃逸校验**：针对边界条件、异常分支与跨租户越权路径补充逆向验证断言。
+4. **可追溯归档**：绑定当前 `trace_id` 输出结构化产物并更新质量门禁评分。
