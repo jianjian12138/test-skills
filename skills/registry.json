@@ -1,7 +1,7 @@
 {
   "version": "12.0.0",
   "edition": "L6.0 Autonomous Quality Engineering Mesh",
-  "total_skills": 46,
+  "total_skills": 49,
   "skills": [
     {
       "index": 1,
@@ -845,6 +845,63 @@
       "l1_summary": "制定测试金字塔配比、准入准出标准与分层自动化 ROI 策略",
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-test-strategy/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 47,
+      "id": "qa-incident-retro",
+      "title": "生产事故时间线复盘与改进项闭环跟踪",
+      "stage": "release_ops",
+      "tier": "L1",
+      "tags": [
+        "incident",
+        "postmortem",
+        "rca",
+        "action-items",
+        "retro"
+      ],
+      "l1_summary": "按时间线还原事故、5 Why 定位根因，并输出带责任人与截止日期的改进项",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-incident-retro/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 48,
+      "id": "qa-prompt-refine",
+      "title": "模糊测试指令打磨为有输入、有约束、有验收标准的可执行 Prompt",
+      "stage": "requirements",
+      "tier": "L1",
+      "tags": [
+        "prompt",
+        "instruction",
+        "acceptance",
+        "refine",
+        "contract"
+      ],
+      "l1_summary": "将模糊测试请求改写为含触发条件、输入输出契约与可判定验收标准的指令",
+      "mcp_tool_binding": "route_qa_skills",
+      "sop_path": "skills/qa-prompt-refine/SKILL.md",
+      "l1_tokens": 42,
+      "l2_tokens": 420
+    },
+    {
+      "index": 49,
+      "id": "qa-mock-service",
+      "title": "下游依赖未就绪时的 Mock 服务与联调阻塞解除",
+      "stage": "tdm_cases",
+      "tier": "L2",
+      "tags": [
+        "mock",
+        "stub",
+        "dependency",
+        "contract",
+        "offline"
+      ],
+      "l1_summary": "按 OpenAPI schema 生成静态桩与状态化 Mock 序列，解除下游未就绪的联调阻塞",
+      "mcp_tool_binding": "generate_test_data",
+      "sop_path": "skills/qa-mock-service/SKILL.md",
       "l1_tokens": 42,
       "l2_tokens": 420
     }
