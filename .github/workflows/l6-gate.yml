@@ -1,0 +1,32 @@
+name: Universal QA Skills L6.0 Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  l6-autonomous-qa-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 1. Run Zero-Token Unit & Protocol Self-Tests
+        run: python3 -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: 2. Run Hybrid TIA Precision Impact Analysis
+        run: python3 qaskills.py tia --diff HEAD~1
+
+      - name: 3. Run OWASP ASI:2026 & AST10 Red-Blue Adversarial Swarm
+        run: python3 qaskills.py swarm --rounds 6
+
+      - name: 4. Enforce 3D Golden Benchmark (tau-bench pass^5 >= 85.0%)
+        run: python3 qaskills.py eval

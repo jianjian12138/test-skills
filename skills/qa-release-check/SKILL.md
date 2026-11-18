@@ -1,7 +1,7 @@
 ---
 name: qa-release-check
 title: 生产发布多重上线红线门禁核查（Go/No-Go）
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: release_ops
 tags: ["release", "gate", "rollback", "canary"]
@@ -11,7 +11,8 @@ mcp_tool_binding: run_quality_gate
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`release_ops`（架构层级：`L2`）
-- **核心职责**：联动覆盖率、P0 缺陷清零、契约兼容性与回滚预案执行发布硬门禁。
+- **核心职责**：联动覆盖率、P0 缺陷清零、契约兼容性与回滚预案执行发布硬门禁（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`run_quality_gate`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

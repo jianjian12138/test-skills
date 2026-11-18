@@ -1,7 +1,7 @@
 ---
 name: qa-mock-service
 title: 下游依赖未就绪时的 Mock 服务与联调阻塞解除
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: tdm_cases
 tags: ["mock", "stub", "dependency", "contract", "offline"]
@@ -13,6 +13,7 @@ mcp_tool_binding: generate_test_data
 - **所属生命周期阶段**：`tdm_cases`（架构层级：`L2`）
 - **核心职责**：当下游服务未部署、第三方接口不可用或沙箱环境缺依赖时，基于 OpenAPI 契约生成静态响应桩与状态化 Mock 序列，让主流程先跑通，不阻塞联调。
 - **触发条件**：下游未就绪但需验证上游主链路；第三方按次计费/有配额限制；需要稳定复现下游超时、500、异常业务码等难构造场景。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与联调解阻】在场景节点下游未就绪时提供契约一致的桩与故障注入，保证链路可跑通并保留真实回归回滚提示（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`generate_test_data`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

@@ -1,7 +1,7 @@
 ---
 name: qa-privacy-compliance
 title: 个人信息保护法（PIPL）与 GDPR 数据合规审计
-version: 12.0.0
+version: 12.1.0
 tier: L1
 stage: security
 tags: ["pipl", "gdpr", "privacy", "consent", "masking"]
@@ -11,7 +11,8 @@ mcp_tool_binding: sanitize_sensitive_data
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`security`（架构层级：`L1`）
-- **核心职责**：核查数据最小化采集、撤回同意链路、日志脱敏与跨境传输合规性。
+- **核心职责**：核查数据最小化采集、撤回同意链路、日志脱敏与跨境传输合规性（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`sanitize_sensitive_data`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

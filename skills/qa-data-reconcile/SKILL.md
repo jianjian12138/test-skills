@@ -1,7 +1,7 @@
 ---
 name: qa-data-reconcile
 title: 分布式账务与跨库数据一致性核对（Reconciliation）
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: quality_gates_agent
 tags: ["reconcile", "consistency", "ledger", "checksum"]
@@ -11,7 +11,8 @@ mcp_tool_binding: generate_test_data
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`quality_gates_agent`（架构层级：`L2`）
-- **核心职责**：校验订单、支付流水与库存台账在并发状态下的最终一致性。
+- **核心职责**：校验订单、支付流水与库存台账在并发状态下的最终一致性（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`generate_test_data`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

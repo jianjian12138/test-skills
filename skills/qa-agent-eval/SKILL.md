@@ -1,7 +1,7 @@
 ---
 name: qa-agent-eval
 title: 被测 AI Agent 能力、τ-bench pass^k 一致性与轨迹可靠性评估
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: quality_gates_agent
 tags: ["agent-eval", "tau-bench", "pass^k", "pass@k", "trajectory"]
@@ -11,7 +11,8 @@ mcp_tool_binding: run_quality_gate
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`quality_gates_agent`（架构层级：`L2`）
-- **核心职责**：通过 3D 黄金数据集与 pass^k (k=5) 幂次律度量 Agent 多轮执行一致性。
+- **核心职责**：通过 3D 黄金数据集与 pass^k (k=5) 幂次律度量 Agent 多轮执行一致性（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`run_quality_gate`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

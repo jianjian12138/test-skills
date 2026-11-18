@@ -1,7 +1,7 @@
 ---
 name: qa-test-strategy
 title: 全局测试策略制定与质量分层规划
-version: 12.0.0
+version: 12.1.0
 tier: L1
 stage: requirements
 tags: ["strategy", "pyramid", "roi", "shift-left"]
@@ -11,7 +11,8 @@ mcp_tool_binding: route_qa_skills
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`requirements`（架构层级：`L1`）
-- **核心职责**：制定测试金字塔配比、准入准出标准与分层自动化 ROI 策略。
+- **核心职责**：制定测试金字塔配比、准入准出标准与分层自动化 ROI 策略（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【骨 · 场景立骨与主干编排】负责从需求提取业务场景状态机、逆向补偿分支与跨节点守恒律（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

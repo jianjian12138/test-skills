@@ -1,7 +1,7 @@
 ---
 name: qa-security-report
 title: 安全渗透与合规审计综合评估报告
-version: 12.0.0
+version: 12.1.0
 tier: L1
 stage: security
 tags: ["security-report", "cvss", "remediation", "owasp"]
@@ -11,7 +11,8 @@ mcp_tool_binding: sanitize_sensitive_data
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`security`（架构层级：`L1`）
-- **核心职责**：汇总 OWASP 漏洞评级、CVSS 得分与修复加固路线图。
+- **核心职责**：汇总 OWASP 漏洞评级、CVSS 得分与修复加固路线图（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`sanitize_sensitive_data`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

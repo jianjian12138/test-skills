@@ -1,7 +1,7 @@
 ---
 name: qa-prompt-refine
 title: 模糊测试指令打磨为有输入、有约束、有验收标准的可执行 Prompt
-version: 12.0.0
+version: 12.1.0
 tier: L1
 stage: requirements
 tags: ["prompt", "instruction", "acceptance", "refine", "contract"]
@@ -13,6 +13,7 @@ mcp_tool_binding: route_qa_skills
 - **所属生命周期阶段**：`requirements`（架构层级：`L1`）
 - **核心职责**：把「帮我测一下」「写点用例」这类一次性模糊请求，改写为含明确触发条件、输入/输出契约与可验收边界的指令；输出可直接作为 Skill 雏形或 Agent 任务描述使用。
 - **触发条件**：用户给出的测试请求缺少输入来源、输出格式或完成标准时；需要把个人经验固化为可复用 Skill 时；评审他人 Prompt 是否可执行时。
+- **“骨·肉·尺”定位**：【骨 · 场景立骨前的意图澄清】把模糊诉求打磨为可判定的输入/约束/验收契约，作为场景立骨的前置条件（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

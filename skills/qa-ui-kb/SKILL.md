@@ -1,7 +1,7 @@
 ---
 name: qa-ui-kb
 title: UI 页面对象知识库与来源签名防投毒
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: ui_mobile
 tags: ["pom", "page-object", "kb", "locator"]
@@ -11,7 +11,8 @@ mcp_tool_binding: heal_ui_locator_aria
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`ui_mobile`（架构层级：`L2`）
-- **核心职责**：维护带 SHA-256 签名溯源的页面无障碍树与语义定位器知识库。
+- **核心职责**：维护带 SHA-256 签名溯源的页面无障碍树与语义定位器知识库（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`heal_ui_locator_aria`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

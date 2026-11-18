@@ -1,6 +1,6 @@
 {
   "benchmark": "Universal QA Skills 3D Golden Benchmark (L6.0)",
-  "version": "12.0.0",
+  "version": "12.1.0",
   "k_trials": 5,
   "distribution": {
     "NORMAL_HAPPY_PATH": "50%",

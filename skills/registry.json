@@ -1,6 +1,6 @@
 {
-  "version": "12.0.0",
-  "edition": "L6.0 Autonomous Quality Engineering Mesh",
+  "version": "12.1.0",
+  "edition": "L6.0 Autonomous Quality Engineering Mesh (Bone-Meat-Ruler Edition)",
   "total_skills": 49,
   "skills": [
     {
@@ -19,7 +19,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-req-spec/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【骨 · 场景立骨与主干编排】负责从需求提取业务场景状态机、逆向补偿分支与跨节点守恒律"
     },
     {
       "index": 2,
@@ -37,7 +38,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-test-analysis/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【骨 · 场景立骨与主干编排】负责从需求提取业务场景状态机、逆向补偿分支与跨节点守恒律"
     },
     {
       "index": 3,
@@ -55,7 +57,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-test-case-gen/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 4,
@@ -75,7 +78,8 @@
       "mcp_tool_binding": "generate_test_data",
       "sop_path": "skills/qa-test-data/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 5,
@@ -93,7 +97,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-env-config/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 6,
@@ -111,7 +116,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-api-doc/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 7,
@@ -131,7 +137,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-api-contract/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 8,
@@ -150,7 +157,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-api-runner/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 9,
@@ -168,7 +176,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-graphql-grpc/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 10,
@@ -187,7 +196,8 @@
       "mcp_tool_binding": "heal_ui_locator_aria",
       "sop_path": "skills/qa-ui-automation/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 11,
@@ -205,7 +215,8 @@
       "mcp_tool_binding": "heal_ui_locator_aria",
       "sop_path": "skills/qa-ui-kb/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 12,
@@ -223,7 +234,8 @@
       "mcp_tool_binding": "heal_ui_locator_aria",
       "sop_path": "skills/qa-ui-testid/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 13,
@@ -242,7 +254,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-mobile-autotest/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 14,
@@ -260,7 +273,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-compat-matrix/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 15,
@@ -278,7 +292,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-exploratory/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 16,
@@ -297,7 +312,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-perf-design/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 17,
@@ -315,7 +331,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-perf-locust/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 18,
@@ -333,7 +350,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-perf-jmeter/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 19,
@@ -352,7 +370,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-db-benchmark/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 20,
@@ -371,7 +390,8 @@
       "mcp_tool_binding": " sanitize_sensitive_data",
       "sop_path": "skills/qa-security-scan/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 21,
@@ -390,7 +410,8 @@
       "mcp_tool_binding": "sanitize_sensitive_data",
       "sop_path": "skills/qa-privacy-compliance/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 22,
@@ -408,7 +429,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-report/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）"
     },
     {
       "index": 23,
@@ -427,7 +449,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-bug-report/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 24,
@@ -445,7 +468,8 @@
       "mcp_tool_binding": "run_tia_analysis",
       "sop_path": "skills/qa-bug-verify/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 25,
@@ -463,7 +487,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-release-check/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）"
     },
     {
       "index": 26,
@@ -481,7 +506,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-archive/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 27,
@@ -500,7 +526,8 @@
       "mcp_tool_binding": "run_tia_analysis",
       "sop_path": "skills/qa-risk-based/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）"
     },
     {
       "index": 28,
@@ -518,7 +545,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-flaky-detect/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 29,
@@ -536,7 +564,8 @@
       "mcp_tool_binding": "run_red_blue_swarm",
       "sop_path": "skills/qa-mutation/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 30,
@@ -555,7 +584,8 @@
       "mcp_tool_binding": "heal_ui_locator_aria",
       "sop_path": "skills/qa-a11y/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 31,
@@ -573,7 +603,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-visual-regression/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 32,
@@ -592,7 +623,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-unit-tdd/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 33,
@@ -610,7 +642,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-chaos/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 34,
@@ -628,7 +661,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-ci/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）"
     },
     {
       "index": 35,
@@ -646,7 +680,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-synthetic-monitoring/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 36,
@@ -664,7 +699,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-log-triage/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 37,
@@ -682,7 +718,8 @@
       "mcp_tool_binding": "generate_test_data",
       "sop_path": "skills/qa-data-reconcile/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）"
     },
     {
       "index": 38,
@@ -700,7 +737,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-shadow-replay/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 39,
@@ -719,7 +757,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-agent-eval/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【尺 · 双轴验收与度量门禁】负责联合校验纵轴（场景连通率与守恒律）与横轴（节点覆盖率与 pass^5 一致性）"
     },
     {
       "index": 40,
@@ -738,7 +777,8 @@
       "mcp_tool_binding": "run_red_blue_swarm",
       "sop_path": "skills/qa-agent-security/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 380
+      "l2_tokens": 380,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 41,
@@ -756,7 +796,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-code-review/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【骨 · 场景立骨与主干编排】负责从需求提取业务场景状态机、逆向补偿分支与跨节点守恒律"
     },
     {
       "index": 42,
@@ -774,7 +815,8 @@
       "mcp_tool_binding": "run_quality_gate",
       "sop_path": "skills/qa-execution/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 43,
@@ -792,7 +834,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-orchestrator/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【骨 · 场景立骨与主干编排】负责从需求提取业务场景状态机、逆向补偿分支与跨节点守恒律"
     },
     {
       "index": 44,
@@ -810,7 +853,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-perf-analysis/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 45,
@@ -828,7 +872,8 @@
       "mcp_tool_binding": "sanitize_sensitive_data",
       "sop_path": "skills/qa-security-report/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全"
     },
     {
       "index": 46,
@@ -846,7 +891,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-test-strategy/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【骨 · 场景立骨与主干编排】负责从需求提取业务场景状态机、逆向补偿分支与跨节点守恒律"
     },
     {
       "index": 47,
@@ -865,7 +911,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-incident-retro/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【尺 · 验收与度量】以事故时间线与改进项闭环校准场景连通门禁，确保放量后问题可追溯、可收敛"
     },
     {
       "index": 48,
@@ -884,7 +931,8 @@
       "mcp_tool_binding": "route_qa_skills",
       "sop_path": "skills/qa-prompt-refine/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【骨 · 场景立骨前的意图澄清】把模糊诉求打磨成可判定输入/约束/验收契约，作为场景立骨的前置条件"
     },
     {
       "index": 49,
@@ -903,7 +951,9 @@
       "mcp_tool_binding": "generate_test_data",
       "sop_path": "skills/qa-mock-service/SKILL.md",
       "l1_tokens": 42,
-      "l2_tokens": 420
+      "l2_tokens": 420,
+      "bone_meat_ruler_role": "【肉 · 节点深潜与联调解阻】在场景节点下游未就绪时提供契约一致的桩与故障注入，保证链路可跑通并留真实回归回滚提示"
     }
-  ]
+  ],
+  "charter": "场景是骨（设计准则），接口是肉（执行准则），双轴为尺（验收与度量准则）"
 }

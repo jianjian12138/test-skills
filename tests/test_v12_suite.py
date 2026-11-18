@@ -130,10 +130,10 @@ class TestUniversalQASkillsV12(unittest.TestCase):
 
     def test_08_mcp_jsonrpc_protocol_handler(self) -> None:
         init_resp = handle_mcp_request({"jsonrpc": "2.0", "id": 1, "method": "initialize"})
-        self.assertEqual(init_resp["result"]["serverInfo"]["version"], "12.0.0")
+        self.assertEqual(init_resp["result"]["serverInfo"]["version"], "12.1.0")
 
         list_resp = handle_mcp_request({"jsonrpc": "2.0", "id": 2, "method": "tools/list"})
-        self.assertEqual(len(list_resp["result"]["tools"]), 9)
+        self.assertEqual(len(list_resp["result"]["tools"]), 10)
 
         call_resp = handle_mcp_request({
             "jsonrpc": "2.0",
@@ -164,6 +164,20 @@ class TestUniversalQASkillsV12(unittest.TestCase):
 
         dl_res = scan_deadlinks(REPO_ROOT)
         self.assertTrue(dl_res["passed"])
+
+
+
+    def test_11_bone_meat_ruler_charter_and_scenario_templates(self) -> None:
+        router = ProgressiveSkillRouter(REPO_ROOT)
+        tpl_list = router.list_scenario_templates()
+        self.assertEqual(tpl_list["total_templates"], 6)
+        self.assertIn("场景是骨", tpl_list["principle"])
+
+        master = router.list_scenario_templates("SCEN-MASTER")
+        self.assertEqual(master["status"], "ok")
+        self.assertIn("【骨】", master["markdown"])
+        self.assertIn("【肉】", master["markdown"])
+        self.assertIn("【尺】", master["markdown"])
 
 
 if __name__ == "__main__":

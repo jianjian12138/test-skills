@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Universal QA Skills v12.0.0 — Zero-Dependency Dual-Mode MCP Server (stdio + Streamable HTTP)."""
+"""Universal QA Skills v12.1.0 — Zero-Dependency Dual-Mode MCP Server (stdio + Streamable HTTP)."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ ROUTER = ProgressiveSkillRouter(REPO_ROOT)
 MCP_TOOLS_SCHEMA = [
     {
         "name": "route_qa_skills",
-        "description": "[L1 Router] 将 40 个 QA 技能按查询意图与阶段收敛至 <= 5 个高相关候选，降低 80%+ 上下文 Token 消耗。",
+        "description": "[L1 Router] 将 49 个 QA 技能按查询意图与阶段收敛至 <= 5 个高相关候选，降低 80%+ 上下文 Token 消耗。",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -50,7 +50,7 @@ MCP_TOOLS_SCHEMA = [
     },
     {
         "name": "list_qa_skills",
-        "description": "检索全部 40 个细分领域 QA 技能清单。",
+        "description": "检索全部 49 个细分领域 QA 技能清单。",
         "inputSchema": {
             "type": "object",
             "properties": {"stage": {"type": "string", "description": "可选阶段过滤"}},
@@ -118,6 +118,16 @@ MCP_TOOLS_SCHEMA = [
             "properties": {"rounds": {"type": "integer", "default": 6}},
         },
     },
+    {
+        "name": "list_scenario_templates",
+        "description": "[骨·肉·尺场景模具] 获取与具体业务解耦的通用业务场景骨架模板清单或指定模板全文。",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "template_id": {"type": "string", "description": "可选模板 ID，如 SCEN-MASTER 或 SCEN-TPL-01"}
+            },
+        },
+    },
 ]
 
 
@@ -133,7 +143,7 @@ def handle_mcp_request(req: dict[str, Any]) -> dict[str, Any]:
             "protocolVersion": "2025-11-25",
             "serverInfo": {
                 "name": "universal-qa-skills-l6",
-                "version": "12.0.0",
+                "version": "12.1.0",
                 "transports": ["stdio", "streamable-http"],
             },
             "capabilities": {"tools": {"listChanged": False}},
@@ -213,6 +223,8 @@ def dispatch_tool_call(name: str, args: dict[str, Any]) -> dict[str, Any]:
             "metrics": {"coverage_pct": cov, "tau_bench_pass_5_pct": pk, "p0_bugs": p0},
             "bola_preview_vectors": bola["total_vectors"],
         }
+    if name == "list_scenario_templates":
+        return ROUTER.list_scenario_templates(str(args.get("template_id", "")))
     if name == "run_red_blue_swarm":
         return run_red_blue_adversarial_swarm(rounds=int(args.get("rounds", 6)))
     raise ValueError(f"Unknown MCP tool: {name}")
@@ -230,7 +242,7 @@ class StreamableHTTPMCPHandler(BaseHTTPRequestHandler):
         if self.path.startswith("/mcp"):
             body = json.dumps({
                 "service": "universal-qa-skills-l6",
-                "version": "12.0.0",
+                "version": "12.1.0",
                 "transport": "streamable-http",
                 "status": "ready",
                 "tools_count": len(MCP_TOOLS_SCHEMA),
@@ -286,7 +298,7 @@ def run_http_server(host: str = "127.0.0.1", port: int = 8765) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Universal QA Skills v12.0.0 MCP Server")
+    parser = argparse.ArgumentParser(description="Universal QA Skills v12.1.0 MCP Server")
     parser.add_argument("--transport", choices=["stdio", "http"], default="stdio")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)

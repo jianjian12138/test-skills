@@ -1,7 +1,7 @@
 ---
 name: qa-compat-matrix
 title: OS × 浏览器 × 设备跨端正交兼容性矩阵
-version: 12.0.0
+version: 12.1.0
 tier: L1
 stage: ui_mobile
 tags: ["compatibility", "pairwise", "browser", "device"]
@@ -11,7 +11,8 @@ mcp_tool_binding: route_qa_skills
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`ui_mobile`（架构层级：`L1`）
-- **核心职责**：基于正交实验法（Pairwise）压缩跨端兼容性测试组合并生成云测矩阵。
+- **核心职责**：基于正交实验法（Pairwise）压缩跨端兼容性测试组合并生成云测矩阵（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

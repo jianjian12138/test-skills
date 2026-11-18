@@ -1,7 +1,7 @@
 ---
 name: qa-incident-retro
 title: 生产事故时间线复盘与改进项闭环跟踪
-version: 12.0.0
+version: 12.1.0
 tier: L1
 stage: release_ops
 tags: ["incident", "postmortem", "rca", "action-items", "retro"]
@@ -13,6 +13,7 @@ mcp_tool_binding: route_qa_skills
 - **所属生命周期阶段**：`release_ops`（架构层级：`L1`）
 - **核心职责**：将生产事故整理为「时间线 → 根因 → 改进项」三段式复盘报告；每条改进项强制携带责任人、截止时间与可验证的完成标准，杜绝「改进项写完后无人认领」。
 - **触发条件**：线上 P0/P1 故障恢复后、重大缺陷引发业务损失后、需要向甲方交付事故复盘文档时。
+- **“骨·肉·尺”定位**：【尺 · 验收与度量】以事故时间线与改进项闭环校准放量后的门禁，确保问题可追溯、可收敛（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

@@ -1,7 +1,7 @@
 ---
 name: qa-archive
 title: 测试资产全量版本化归档与基线快照锁定
-version: 12.0.0
+version: 12.1.0
 tier: L1
 stage: release_ops
 tags: ["archive", "baseline", "audit", "versioning"]
@@ -11,7 +11,8 @@ mcp_tool_binding: route_qa_skills
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`release_ops`（架构层级：`L1`）
-- **核心职责**：将用例集、覆盖率 SQLite 映射库、ARIA 快照与评测报告版本化封存。
+- **核心职责**：将用例集、覆盖率 SQLite 映射库、ARIA 快照与评测报告版本化封存（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

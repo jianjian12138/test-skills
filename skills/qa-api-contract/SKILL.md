@@ -1,7 +1,7 @@
 ---
 name: qa-api-contract
 title: OpenAPI 3.0/3.1 破坏性变更检测与 3D BOLA 契约模糊测试
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: api_testing
 tags: ["contract", "openapi", "ref", "bola", "idor", "fuzzing"]
@@ -11,7 +11,8 @@ mcp_tool_binding: run_quality_gate
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`api_testing`（架构层级：`L2`）
-- **核心职责**：递归解析 $ref 检测破坏性变更，并生成租户×角色×状态三维 BOLA 越权矩阵。
+- **核心职责**：递归解析 $ref 检测破坏性变更，并生成租户×角色×状态三维 BOLA 越权矩阵（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`run_quality_gate`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

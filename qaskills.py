@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Universal QA Skills (v12.0.0 — L6.0 Industrial Edition) Unified CLI."""
+"""Universal QA Skills (v12.1.0 — L6.0 Industrial Edition) Unified CLI."""
 
 from __future__ import annotations
 
@@ -26,11 +26,11 @@ def main() -> int:
     new_trace_id("cli")
     parser = argparse.ArgumentParser(
         prog="qaskills",
-        description="Universal QA Skills v12.0.0 (L6.0 Autonomous Quality Engineering Mesh)",
+        description="Universal QA Skills v12.1.0 (L6.0 Autonomous Quality Engineering Mesh)",
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    p_list = sub.add_parser("list", help="列出全部 40 个细分 QA 技能")
+    p_list = sub.add_parser("list", help="列出全部 49 个细分 QA 技能")
     p_list.add_argument("--stage", default="", help="按生命周期阶段过滤")
 
     p_search = sub.add_parser("search", help="按关键词搜索 QA 技能")
@@ -66,6 +66,9 @@ def main() -> int:
 
     sub.add_parser("eval", help="运行 3D 黄金数据集与 τ-bench pass^k (k=5) 自动化评测套件")
 
+    p_tpl = sub.add_parser("templates", help="[v12.1 新增] 查看通用业务场景“骨·肉·尺”模板清单或模板详情")
+    p_tpl.add_argument("--id", default="", help="指定模板 ID，如 SCEN-MASTER 或 SCEN-TPL-01")
+
     p_mcp = sub.add_parser("serve-mcp", help="启动双模 MCP Server (stdio 或 Streamable HTTP)")
     p_mcp.add_argument("--transport", choices=["stdio", "http"], default="stdio")
     p_mcp.add_argument("--host", default="127.0.0.1")
@@ -76,7 +79,7 @@ def main() -> int:
 
     if args.cmd == "list":
         skills = router.list_all(stage=args.stage)
-        print(f"=== Universal QA Skills (v12.0.0 L6.0) — 共 {len(skills)} 项原子技能 ===")
+        print(f"=== Universal QA Skills (v12.1.0 L6.0) — 共 {len(skills)} 项原子技能 ===")
         for s in skills:
             print(f"[{s['index']:02d}] {s['id']:<24} ({s['tier']}/{s['stage']}) -> {s['title']}")
         return 0
@@ -130,6 +133,11 @@ def main() -> int:
         eval_script = REPO_ROOT / "evals" / "run_evals.py"
         proc = subprocess.run([sys.executable, str(eval_script)], cwd=str(REPO_ROOT), check=False)
         return proc.returncode
+
+    if args.cmd == "templates":
+        res = router.list_scenario_templates(template_id=args.id)
+        print(json.dumps(res, ensure_ascii=False, indent=2))
+        return 0
 
     if args.cmd == "serve-mcp":
         if args.transport == "http":

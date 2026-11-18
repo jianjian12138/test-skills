@@ -1,0 +1,42 @@
+{
+  "version": "12.1.0",
+  "principle": "场景是骨，接口是肉，双轴为尺",
+  "templates": [
+    {
+      "id": "SCEN-MASTER",
+      "title": "通用业务场景“骨·肉·尺”主模板",
+      "path": "skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md",
+      "applicable_to": "所有业务领域的端到端场景立骨、节点挂肉与双轴量尺"
+    },
+    {
+      "id": "SCEN-TPL-01",
+      "title": "状态机流转与逆向超时/退回补偿场景模板",
+      "path": "skills/templates/scenarios/01_STATE_MACHINE_AND_COMPENSATION_TEMPLATE.md",
+      "applicable_to": "适用于任何包含“创建 -> 锁定 -> 确认/完成 -> 超时关闭/主动取消/逆向退回”的生命周期流转业务。"
+    },
+    {
+      "id": "SCEN-TPL-02",
+      "title": "高并发资源争抢与配额/余额扣减场景模板",
+      "path": "skills/templates/scenarios/02_HIGH_CONCURRENCY_QUOTA_DEDUCTION_TEMPLATE.md",
+      "applicable_to": "适用于任何包含有限配额、库存、账户余额、并发抢锁、防超卖与防双花幂等的业务场景。"
+    },
+    {
+      "id": "SCEN-TPL-03",
+      "title": "多角色审批流与跨租户权限隔离场景模板",
+      "path": "skills/templates/scenarios/03_MULTI_TENANT_RBAC_APPROVAL_TEMPLATE.md",
+      "applicable_to": "适用于任何包含多租户隔离（Tenant A/B）、多角色分级授权（提交人/审批人/审计员）与状态越权防护的业务场景。"
+    },
+    {
+      "id": "SCEN-TPL-04",
+      "title": "异步事件驱动、乱序回调与跨库最终一致性对账场景模板",
+      "path": "skills/templates/scenarios/04_ASYNC_EVENT_AND_RECONCILIATION_TEMPLATE.md",
+      "applicable_to": "适用于任何包含 Webhook 异步通知、消息队列投递、回调乱序到达与跨系统对账（Reconciliation）的业务场景。"
+    },
+    {
+      "id": "SCEN-TPL-05",
+      "title": "AI Agent 多轮工具调用、边界追问与防越狱交互场景模板",
+      "path": "skills/templates/scenarios/05_AI_AGENT_MULTI_TURN_TOOL_CALL_TEMPLATE.md",
+      "applicable_to": "适用于任何包含 LLM 意图路由、MCP 工具调用、缺失上下文追问、记忆防投毒与 τ-bench pass^k 一致性验证的智能体场景。"
+    }
+  ]
+}

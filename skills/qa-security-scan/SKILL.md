@@ -1,7 +1,7 @@
 ---
 name: qa-security-scan
 title: OWASP Top 10 安全核查、SAST/DAST 与敏感凭据扫描
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: security
 tags: ["owasp", "xss", "sqli", "ssrf", "secrets"]
@@ -11,7 +11,8 @@ mcp_tool_binding:  sanitize_sensitive_data
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`security`（架构层级：`L2`）
-- **核心职责**：执行注入漏洞、越权访问与硬编码密钥泄漏静态/动态扫描。
+- **核心职责**：执行注入漏洞、越权访问与硬编码密钥泄漏静态/动态扫描（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：` sanitize_sensitive_data`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

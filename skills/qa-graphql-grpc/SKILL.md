@@ -1,7 +1,7 @@
 ---
 name: qa-graphql-grpc
 title: GraphQL 与 gRPC 协议契约及深度嵌套查询测试
-version: 12.0.0
+version: 12.1.0
 tier: L2
 stage: api_testing
 tags: ["graphql", "grpc", "protobuf", "depth"]
@@ -11,7 +11,8 @@ mcp_tool_binding: route_qa_skills
 
 ## 1. 技能定位与适用场景 (When to Use)
 - **所属生命周期阶段**：`api_testing`（架构层级：`L2`）
-- **核心职责**：针对 GraphQL 循环查询炸弹与 gRPC 状态码映射进行专项契约验证。
+- **核心职责**：针对 GraphQL 循环查询炸弹与 gRPC 状态码映射进行专项契约验证（纯通用原子技能，零特定行业业务耦合）。
+- **“骨·肉·尺”定位**：【肉 · 节点深潜与正交爆破】挂载于场景模板的具体节点插槽上，保持纯技术通用性，打穿边界值、异常码、权限、性能与安全（配合 [`skills/templates/SCENARIO_BONE_MASTER_TEMPLATE.md`](../templates/SCENARIO_BONE_MASTER_TEMPLATE.md) 使用）。
 - **关联 MCP 原生工具**：`route_qa_skills`（由 `skills/tools/mcp_server.py` 统一暴露）。
 
 ## 2. 四维边界契约 (4-Panel Boundary Blueprint)

@@ -69,7 +69,7 @@ class TokenCostLedger:
 
 
 class ProgressiveSkillRouter:
-    """Routes user QA queries across all registered skills down to <= 5 high-signal candidates."""
+    """Routes user QA queries across 40 skills down to <= 5 high-signal candidates."""
 
     def __init__(self, repo_root: Path | None = None) -> None:
         self.repo_root = repo_root or Path(__file__).resolve().parents[2]
@@ -89,7 +89,7 @@ class ProgressiveSkillRouter:
         return [s for s in self._registry_data if s.get("stage") == stage]
 
     def route(self, query: str, stage: str = "", top_k: int = 4) -> dict[str, Any]:
-        """Filter registered skills to <= 5 candidates using keyword, tag, stage and CJK substring affinity."""
+        """Filter 40 skills to <= 5 candidates using keyword, tag, and stage affinity."""
         if not query.strip() and not stage:
             selected = self._registry_data[: min(top_k, 5)]
         else:
@@ -118,16 +118,16 @@ class ProgressiveSkillRouter:
                         score += 3.0
                     if term in sid or term in title or term in summary:
                         score += 2.5
-                    # CJK queries have no word boundaries: fall back to 2-gram overlap
-                    # so phrases like "提示词打磨" still match a skill titled "指令打磨".
-                    cjk_chars = [ch for ch in term if "\u4e00" <= ch <= "\u9fff"]
-                    if len(cjk_chars) >= 2:
-                        bigrams = {term[i:i + 2] for i in range(len(term) - 1)}
-                        for bg in bigrams:
-                            if bg in title or bg in summary or bg in sid:
-                                score += 1.0
-                            if any(bg in tg for tg in tags):
-                                score += 0.5
+                # CJK queries have no word boundaries: fall back to 2-gram overlap
+                # so phrases like "提示词打磨" still match a skill titled "指令打磨".
+                cjk_chars = [ch for ch in term if "\u4e00" <= ch <= "\u9fff"]
+                if len(cjk_chars) >= 2:
+                    bigrams = {term[i:i + 2] for i in range(len(term) - 1)}
+                    for bg in bigrams:
+                        if bg in title or bg in summary or bg in sid:
+                            score += 1.0
+                        if any(bg in tg for tg in tags):
+                            score += 0.5
                 if stage and skill.get("stage") == stage:
                     score += 4.0
                 scored.append((score, skill))
@@ -179,4 +179,29 @@ class ProgressiveSkillRouter:
             "mcp_tool_binding": target.get("mcp_tool_binding"),
             "sop_markdown": content,
             "telemetry": self.ledger.summary(),
+        }
+
+    def list_scenario_templates(self, template_id: str = "") -> dict[str, Any]:
+        """List pluggable business scenario templates (Bone layer) decoupled from universal skills."""
+        idx_path = self.repo_root / "skills" / "templates" / "scenarios_index.json"
+        if not idx_path.exists():
+            return {"trace_id": get_trace_id(), "templates": []}
+        data = json.loads(idx_path.read_text(encoding="utf-8"))
+        tpls = data.get("templates", [])
+        if template_id:
+            matched = next((t for t in tpls if t["id"].lower() == template_id.lower()), None)
+            if not matched:
+                return {"trace_id": get_trace_id(), "status": "error", "error": f"Template '{template_id}' not found."}
+            md_path = self.repo_root / matched["path"]
+            return {
+                "trace_id": get_trace_id(),
+                "status": "ok",
+                "template": matched,
+                "markdown": md_path.read_text(encoding="utf-8") if md_path.exists() else "",
+            }
+        return {
+            "trace_id": get_trace_id(),
+            "principle": data.get("principle", "场景是骨，接口是肉，双轴为尺"),
+            "total_templates": len(tpls),
+            "templates": tpls,
         }

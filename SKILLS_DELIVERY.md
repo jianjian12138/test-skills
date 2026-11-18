@@ -1,4 +1,4 @@
-# 49 项原子 QA 技能全景交付矩阵 (SKILLS_DELIVERY.md — v12.0.0 L6.0 完整合一版)
+# 49 项原子 QA 技能全景交付矩阵 (SKILLS_DELIVERY.md — v12.1.0 L6.0 骨肉尺融合版)
 
 | 序号 | 技能 ID | 技能名称 | 生命周期阶段 | 架构层级 | 绑定 MCP 原生工具 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -49,5 +49,5 @@
 | 45 | `qa-security-report` | 安全渗透与合规审计综合评估报告 | `security` | `L1` | `sanitize_sensitive_data` |
 | 46 | `qa-test-strategy` | 全局测试策略制定与质量分层规划 | `requirements` | `L1` | `route_qa_skills` |
 | 47 | `qa-incident-retro` | 生产事故时间线复盘与改进项闭环跟踪 | `release_ops` | `L1` | `route_qa_skills` |
-| 48 | `qa-prompt-refine` | 模糊测试指令打磨为有输入、有约束、有验收标准的可执行 Prompt | `requirements` | `L1` | `route_qa_skills` |
-| 49 | `qa-mock-service` | 下游依赖未就绪时的 Mock 服务与联调阻塞解除 | `tdm_cases` | `L2` | `generate_test_data` |
+| 48 | `qa-prompt-refine` | 模糊测试指令打磨为可执行 Prompt 契约 | `requirements` | `L1` | `route_qa_skills` |
+| 49 | `qa-mock-service` | 下游未就绪时的 Mock 服务与联调阻塞解除 | `tdm_cases` | `L2` | `generate_test_data` |

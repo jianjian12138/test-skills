@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Universal QA Skills v12.0.0 — 3D Golden Benchmark & tau-bench pass^k (k=5) Evaluation Harness."""
+"""Universal QA Skills v12.1.0 — 3D Golden Benchmark & tau-bench pass^k (k=5) Evaluation Harness."""
 
 from __future__ import annotations
 
@@ -91,7 +91,7 @@ def run_evaluation_suite(k: int = 5) -> dict[str, Any]:
     router = ProgressiveSkillRouter(REPO_ROOT)
 
     print("================================================================================")
-    print("🧪 Universal QA Skills (v12.0.0 L6.0) — 3D Golden Benchmark & τ-bench pass^k 评测")
+    print("🧪 Universal QA Skills (v12.1.0 L6.0) — 3D Golden Benchmark & τ-bench pass^k 评测")
     print("================================================================================")
 
     case_results: list[dict[str, Any]] = []
@@ -130,7 +130,7 @@ def run_evaluation_suite(k: int = 5) -> dict[str, Any]:
     print("================================================================================")
 
     return {
-        "version": "12.0.0",
+        "version": "12.1.0",
         "k_trials": k,
         "total_cases": len(case_results),
         "avg_pass_at_k_pct": avg_pass_at_k,
